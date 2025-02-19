@@ -1,6 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  transpilePackages: ["@workspace/ui"],
-}
+	transpilePackages: ["@workspace/ui"],
+	images: {
+		domains: ["avatars.githubusercontent.com"],
+	},
+};
 
-export default nextConfig
+export default nextConfig;
