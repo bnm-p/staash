@@ -87,6 +87,7 @@ export const CreateOrgForm: FC<ICreateOrgFormProps> = ({
 				organizationSlug: values.slug,
 			});
 			toast.success("Organization created");
+			router.refresh();
 			router.push(`/${values.slug}`);
 		} catch (error) {
 			console.error("Form submission error", error);
