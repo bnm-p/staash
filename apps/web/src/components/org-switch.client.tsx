@@ -10,10 +10,10 @@ import {
 } from "@workspace/ui/components/popover";
 import { Skeleton } from "@workspace/ui/components/skeleton";
 import { cn } from "@workspace/ui/lib/utils";
-import { useEffect, useState, type FC } from "react";
+import { useCallback, useEffect, useState, type FC } from "react";
 import Image from "next/image";
-import { ChevronsUpDown, Plus, PlusCircle } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { ChevronsUpDown, Plus, PlusCircle, Rotate3D } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
 import type { IOrgSwitchProps } from "./org-switch";
 import { Button } from "@workspace/ui/components/button";
 
@@ -28,21 +28,34 @@ export const OrgSwitchClient: FC<IOrgSwitchClientProps> = ({
 }) => {
 	const [open, setOpen] = useState<boolean>(false);
 	const router = useRouter();
+	const pathname = usePathname();
 	const { data: activeOrganization, isPending } =
 		authClient.useActiveOrganization();
 
-	const handleOrgChange = async (org: Organization) => {
-		if (!org.slug) return;
+	const handleOrgChange = useCallback(
+		async (org: Organization) => {
+			if (!org.slug) return;
 
-		await authClient.organization.setActive({
-			organizationSlug: org.slug,
-		});
-	};
+			await authClient.organization.setActive({
+				organizationSlug: org.slug,
+			});
+
+			router.push(`/${org.slug}`);
+		},
+		[router],
+	);
 
 	useEffect(() => {
-		if (!activeOrganization) return;
-		router.push(`/${activeOrganization.slug}`);
-	}, [activeOrganization, router]);
+		const orgSlug = pathname.split("/")[1];
+		if (orgSlug && orgSlug !== "create") {
+			const org = organizations.find((org) => org.slug === orgSlug);
+			if (!org) {
+				router.push("/");
+				return;
+			}
+			handleOrgChange(org);
+		}
+	}, [pathname, handleOrgChange, organizations, router]);
 
 	const handleCreateOrg = () => {
 		router.push("/create");
