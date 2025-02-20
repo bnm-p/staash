@@ -33,7 +33,7 @@ export const UserProfileClient: FC<IUserProfileClientProps> = ({ className, user
 			<DropdownMenuTrigger asChild>
 				<button
 					type="button"
-					className={cn("h-full w-56 gap-2 flex items-center px-8 hover:bg-muted border-border border-l", className)}
+					className={cn("flex h-full w-56 items-center gap-2 border-border border-l px-8 hover:bg-muted", className)}
 					{...props}
 				>
 					<div className="flex items-center gap-2">

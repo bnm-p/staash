@@ -69,11 +69,11 @@ export const CreateSpaceForm: FC<ICreateOrgFormProps> = ({ className, ...props }
 	return (
 		<div className={cn("", className)} {...props}>
 			<div>
-				<h1 className="text-2xl font-semibold">Create Space</h1>
+				<h1 className="font-semibold text-2xl">Create Space</h1>
 				<p className="text-muted-foreground">Set up your new space in seconds</p>
 			</div>
 			<Form {...form}>
-				<form onSubmit={form.handleSubmit(onSubmit)} className={cn("space-y-8 w-full py-10", className)}>
+				<form onSubmit={form.handleSubmit(onSubmit)} className={cn("w-full space-y-8 py-10", className)}>
 					<FormField
 						control={form.control}
 						name="name"
@@ -97,7 +97,7 @@ export const CreateSpaceForm: FC<ICreateOrgFormProps> = ({ className, ...props }
 								<FormLabel>Slug</FormLabel>
 								<FormControl className="flex items-stretch">
 									<div className="max-w-md">
-										<div className="px-4 py-2 bg-muted border border-r-0 border-border text-muted-foreground text-sm flex items-center">
+										<div className="flex items-center border border-border border-r-0 bg-muted px-4 py-2 text-muted-foreground text-sm">
 											staash.app/{activeOrganization?.slug}/
 										</div>
 										<Input

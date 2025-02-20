@@ -17,7 +17,7 @@ export const Logo: FC<ILogoProps> = ({ className, ...props }) => {
 					fill="currentColor"
 				/>
 			</svg>
-			<span className="uppercase text-sm font-bold tracking-tight">staash</span>
+			<span className="font-bold text-sm uppercase tracking-tight">staash</span>
 		</div>
 	);
 };

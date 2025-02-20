@@ -16,15 +16,15 @@ export default async function DashboardLayout({
 
 	return (
 		<div>
-			<div className="flex border-b h-14 border-border">
-				<div className="w-72 border-r border-border" />
+			<div className="flex h-14 border-border border-b">
+				<div className="w-72 border-border border-r" />
 				<Nav />
-				<div className="w-72 border-l border-border" />
+				<div className="w-72 border-border border-l" />
 			</div>
-			<div className="flex border-b min-h-[calc(100svh-3.5rem)] border-border">
-				<div className="w-72 border-r border-border" />
+			<div className="flex min-h-[calc(100svh-3.5rem)] border-border border-b">
+				<div className="w-72 border-border border-r" />
 				<main className="flex-grow">{children}</main>
-				<div className="w-72 border-l border-border" />
+				<div className="w-72 border-border border-l" />
 			</div>
 		</div>
 	);

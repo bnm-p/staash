@@ -85,14 +85,14 @@ export const CreateOrgForm: FC<ICreateOrgFormProps> = ({ className, ...props }) 
 	}
 
 	return (
-		<div className="w-full grid grid-cols-1 gap-4 md:grid-cols-2">
+		<div className="grid w-full grid-cols-1 gap-4 md:grid-cols-2">
 			<div>
 				<div>
-					<h1 className="text-2xl font-semibold">Create Organization</h1>
+					<h1 className="font-semibold text-2xl">Create Organization</h1>
 					<p className="text-muted-foreground">Set up your new organization in seconds</p>
 				</div>
 				<Form {...form}>
-					<form onSubmit={form.handleSubmit(onSubmit)} className={cn("space-y-8 w-full py-10", className)} {...props}>
+					<form onSubmit={form.handleSubmit(onSubmit)} className={cn("w-full space-y-8 py-10", className)} {...props}>
 						<FormField
 							control={form.control}
 							name="name"
@@ -116,7 +116,7 @@ export const CreateOrgForm: FC<ICreateOrgFormProps> = ({ className, ...props }) 
 									<FormLabel>Slug</FormLabel>
 									<FormControl className="flex items-stretch">
 										<div className="max-w-md">
-											<div className="px-4 py-2 bg-muted border border-r-0 border-border text-muted-foreground text-sm flex items-center">
+											<div className="flex items-center border border-border border-r-0 bg-muted px-4 py-2 text-muted-foreground text-sm">
 												staash.app/
 											</div>
 											<Input
@@ -157,8 +157,8 @@ export const CreateOrgForm: FC<ICreateOrgFormProps> = ({ className, ...props }) 
 					</form>
 				</Form>
 			</div>
-			<div className="flex justify-center items-center">
-				<div className="border border-border bg-background p-4 max-w-md w-full">
+			<div className="flex items-center justify-center">
+				<div className="w-full max-w-md border border-border bg-background p-4">
 					<div className="flex items-start gap-4">
 						<div className="relative h-12 w-12 overflow-hidden border border-border">
 							{logoPreview ? (
@@ -176,12 +176,12 @@ export const CreateOrgForm: FC<ICreateOrgFormProps> = ({ className, ...props }) 
 						</div>
 						<div className="flex-1 space-y-1">
 							<h3 className="font-medium">{watchName || "My Organization"}</h3>
-							<p className="text-sm text-muted-foreground">staash.app/{watchSlug || "my-organization"}</p>
+							<p className="text-muted-foreground text-sm">staash.app/{watchSlug || "my-organization"}</p>
 						</div>
 					</div>
 
 					<div className="mt-6 border-t pt-6">
-						<div className="flex items-center gap-2 text-sm text-muted-foreground">
+						<div className="flex items-center gap-2 text-muted-foreground text-sm">
 							<Users className="h-4 w-4" />
 							<span>0 members</span>
 						</div>

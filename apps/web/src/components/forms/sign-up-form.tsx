@@ -39,7 +39,7 @@ export const SignUpForm: FC<ISignUpFormProps> = ({ className, ...props }) => {
 	};
 
 	return (
-		<Card className={cn("z-50 rounded-md rounded-t-none max-w-md", className)} {...props}>
+		<Card className={cn("z-50 max-w-md rounded-md rounded-t-none", className)} {...props}>
 			<CardHeader>
 				<CardTitle className="text-lg md:text-xl">Sign Up</CardTitle>
 				<CardDescription className="text-xs md:text-sm">Enter your information to create an account</CardDescription>
@@ -111,11 +111,11 @@ export const SignUpForm: FC<ISignUpFormProps> = ({ className, ...props }) => {
 						<Label htmlFor="image">Profile Image (optional)</Label>
 						<div className="flex items-end gap-4">
 							{imagePreview && (
-								<div className="relative w-16 h-16 rounded-sm overflow-hidden">
+								<div className="relative h-16 w-16 overflow-hidden rounded-sm">
 									<Image src={imagePreview} alt="Profile preview" layout="fill" objectFit="cover" />
 								</div>
 							)}
-							<div className="flex items-center gap-2 w-full">
+							<div className="flex w-full items-center gap-2">
 								<Input id="image" type="file" accept="image/*" onChange={handleImageChange} className="w-full" />
 								{imagePreview && (
 									<X
@@ -161,10 +161,10 @@ export const SignUpForm: FC<ISignUpFormProps> = ({ className, ...props }) => {
 					</Button>
 				</div>
 			</CardContent>
-			<CardFooter className="flex justify-center w-full border-t py-4">
-				<p className="text-center text-xs text-muted-foreground">
+			<CardFooter className="flex w-full justify-center border-t py-4">
+				<p className="text-center text-muted-foreground text-xs">
 					Already have an account?{" "}
-					<Link href="/auth/sign-in" className="underline text-foreground">
+					<Link href="/auth/sign-in" className="text-foreground underline">
 						Sign in
 					</Link>
 					.

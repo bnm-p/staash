@@ -22,9 +22,9 @@ const SpaceSlugPage: NextPage<ISpaceSlugPageProps> = async ({ params }) => {
 
 	return (
 		<>
-			<section className="background-stripes animate | relative border-b border-border px-8 py-6">
+			<section className="background-stripes animate | relative border-border border-b px-8 py-6">
 				<div className="absolute inset-0 bg-gradient-to-r from-background to-transparent" />
-				<div className="space-y-1.5 relative z-10">
+				<div className="relative z-10 space-y-1.5">
 					<h1>{space.name}</h1>
 					<p className="text-muted-foreground">
 						{orgSlug}/{spaceSlug}

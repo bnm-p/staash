@@ -138,7 +138,7 @@ export const OrgSwitchClient: FC<IOrgSwitchClientProps> = ({ className, organiza
 					type="button"
 					aria-expanded={open}
 					aria-label="Select organization and space"
-					className="h-full w-[256px] justify-between flex items-center px-8 hover:bg-muted"
+					className="flex h-full w-[256px] items-center justify-between px-8 hover:bg-muted"
 					{...props}
 				>
 					<div className="flex items-center gap-2">
@@ -146,7 +146,7 @@ export const OrgSwitchClient: FC<IOrgSwitchClientProps> = ({ className, organiza
 							<AvatarImage src={activeOrganization?.logo || ""} alt={activeOrganization?.name} />
 							<AvatarFallback>{activeOrganization?.name[0]}</AvatarFallback>
 						</Avatar>
-						<span className="text-sm truncate max-w-[130px]">
+						<span className="max-w-[130px] truncate text-sm">
 							{activeOrganization?.name}
 							{selectedSpace ? ` / ${selectedSpace.name}` : ""}
 						</span>
@@ -154,7 +154,7 @@ export const OrgSwitchClient: FC<IOrgSwitchClientProps> = ({ className, organiza
 					<ChevronsUpDown className="ml-auto h-4 w-4 shrink-0 opacity-50" />
 				</button>
 			</PopoverTrigger>
-			<PopoverContent className="w-[516px] p-0 border-none" align="start" alignOffset={-1} sideOffset={0}>
+			<PopoverContent className="w-[516px] border-none p-0" align="start" alignOffset={-1} sideOffset={0}>
 				<div className="grid grid-cols-2 overflow-hidden border bg-background shadow-sm">
 					<div className="border-r">
 						<Command className="h-full border-none">

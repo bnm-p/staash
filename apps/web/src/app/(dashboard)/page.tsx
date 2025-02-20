@@ -27,7 +27,7 @@ const IndexPage: NextPage = async () => {
 		return redirect("/create");
 	}
 
-	return redirect(`/${organizations[0]!.slug}`);
+	return redirect(`/${organizations[0]?.slug}`);
 };
 
 export default IndexPage;

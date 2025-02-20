@@ -20,7 +20,7 @@ export const SignInForm: FC<ISignInFormProps> = ({ className, ...props }) => {
 	const [rememberMe, setRememberMe] = useState(false);
 
 	return (
-		<Card className={cn("max-w-md relative", className)} {...props}>
+		<Card className={cn("relative max-w-md", className)} {...props}>
 			<CardHeader>
 				<CardTitle className="text-lg md:text-xl">Sign In</CardTitle>
 				<CardDescription className="text-xs md:text-sm">Enter your email below to login to your account</CardDescription>
@@ -79,14 +79,14 @@ export const SignInForm: FC<ISignInFormProps> = ({ className, ...props }) => {
 					>
 						{loading ? <Loader2 size={16} className="animate-spin" /> : "Login"}
 					</Button>
-					<div className="h-4 my-1">
-						<div className="absolute left-0 right-0 flex items-center gap-x-4">
-							<div className="w-full h-px bg-muted" />
-							<span className="uppercase text-xs text-muted-foreground whitespace-nowrap">or continue with</span>
-							<div className="w-full h-px bg-muted" />
+					<div className="my-1 h-4">
+						<div className="absolute right-0 left-0 flex items-center gap-x-4">
+							<div className="h-px w-full bg-muted" />
+							<span className="whitespace-nowrap text-muted-foreground text-xs uppercase">or continue with</span>
+							<div className="h-px w-full bg-muted" />
 						</div>
 					</div>
-					<div className={cn("w-full gap-2 flex items-center", "justify-between flex-col")}>
+					<div className={cn("flex w-full items-center gap-2", "flex-col justify-between")}>
 						{/* <Button
 							variant="outline"
 							className={cn("w-full gap-2")}
@@ -145,10 +145,10 @@ export const SignInForm: FC<ISignInFormProps> = ({ className, ...props }) => {
 					</div>
 				</div>
 			</CardContent>
-			<CardFooter className="flex justify-center w-full border-t py-4">
-				<p className="text-center text-xs text-muted-foreground">
+			<CardFooter className="flex w-full justify-center border-t py-4">
+				<p className="text-center text-muted-foreground text-xs">
 					Don&apos;t have an account?{" "}
-					<Link href="/auth/sign-up" className="underline text-foreground">
+					<Link href="/auth/sign-up" className="text-foreground underline">
 						Sign up
 					</Link>
 					.
