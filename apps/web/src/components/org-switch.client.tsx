@@ -77,16 +77,23 @@ export const OrgSwitchClient: FC<IOrgSwitchClientProps> = ({
 	);
 
 	useEffect(() => {
-		const orgSlug = pathname.split("/")[1];
+		const segments = pathname.split("/").filter(Boolean);
+		const orgSlug = segments[0];
 		if (orgSlug && orgSlug !== "create") {
 			const org = organizations.find((org) => org.slug === orgSlug);
 			if (!org) {
 				router.push("/");
 				return;
 			}
-			handleOrgChange(org);
+			// Set active organization regardless
+			authClient.organization.setActive({ organizationSlug: org.slug });
+
+			// Only redirect if there is no additional path (i.e. only the org slug)
+			if (segments.length === 1) {
+				router.push(`/${org.slug}`);
+			}
 		}
-	}, [pathname, handleOrgChange, organizations, router]);
+	}, [pathname, organizations, router]);
 
 	const handleCreateOrg = () => {
 		router.push("/create/org");

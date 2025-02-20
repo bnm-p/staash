@@ -23,7 +23,7 @@ export default async function DashboardLayout({
 			</div>
 			<div className="flex border-b min-h-[calc(100svh-3.5rem)] border-border">
 				<div className="w-72 border-r border-border" />
-				<main className="flex-grow px-4 pt-12">{children}</main>
+				<main className="flex-grow">{children}</main>
 				<div className="w-72 border-l border-border" />
 			</div>
 		</div>

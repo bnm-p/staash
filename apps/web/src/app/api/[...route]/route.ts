@@ -3,49 +3,50 @@ import { cors } from "hono/cors";
 import { handle } from "hono/vercel";
 import { helloRouter } from "./routers/hello-router";
 import { auth } from "@/lib/auth";
+import { createRouter } from "./routers/create-router";
 
 export const runtime = "edge";
 
 declare module "hono" {
-  interface ContextVariableMap {
-    user: typeof auth.$Infer.Session.user | null;
-    session: typeof auth.$Infer.Session.session | null;
-  }
+	interface ContextVariableMap {
+		user: typeof auth.$Infer.Session.user | null;
+		session: typeof auth.$Infer.Session.session | null;
+	}
 }
 
 const app = new Hono().basePath("/api");
 
 app.use("*", async (c, next) => {
-  const session = await auth.api.getSession({ headers: c.req.raw.headers });
+	const session = await auth.api.getSession({ headers: c.req.raw.headers });
 
-  if (!session) {
-    c.set("user", null);
-    c.set("session", null);
-    return next();
-  }
+	if (!session) {
+		c.set("user", null);
+		c.set("session", null);
+		return next();
+	}
 
-  c.set("user", session.user);
-  c.set("session", session.session);
-  return next();
+	c.set("user", session.user);
+	c.set("session", session.session);
+	return next();
 });
 
 app.use(
-  "/auth/*", // or replace with "*" to enable cors for all routes
-  cors({
-    origin: "http://localhost:3000", // replace with your origin
-    allowHeaders: ["Content-Type", "Authorization"],
-    allowMethods: ["POST", "GET", "OPTIONS"],
-    exposeHeaders: ["Content-Length"],
-    maxAge: 600,
-    credentials: true,
-  })
+	"/auth/*", // or replace with "*" to enable cors for all routes
+	cors({
+		origin: "http://localhost:3000", // replace with your origin
+		allowHeaders: ["Content-Type", "Authorization"],
+		allowMethods: ["POST", "GET", "OPTIONS"],
+		exposeHeaders: ["Content-Length"],
+		maxAge: 600,
+		credentials: true,
+	}),
 );
 
 app.on(["POST", "GET"], "/auth/*", (c) => {
-  return auth.handler(c.req.raw);
+	return auth.handler(c.req.raw);
 });
 
-const routes = app.route("/hello", helloRouter);
+const routes = app.route("/hello", helloRouter).route("/create", createRouter);
 
 export const GET = handle(app);
 export const POST = handle(app);
