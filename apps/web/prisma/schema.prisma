@@ -87,6 +87,7 @@ model Organization {
   metadata    String?
   members     Member[]
   invitations Invitation[]
+  spaces      Space[]
 
   @@unique([slug])
   @@map("organization")
@@ -116,4 +117,40 @@ model Invitation {
   user           User         @relation(fields: [inviterId], references: [id], onDelete: Cascade)
 
   @@map("invitation")
+}
+
+model Space {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  name           String
+  slug           String
+  createdAt      DateTime @default(now())
+  stages         Stage[]
+
+  @@unique([slug])
+  @@map("space")
+}
+
+model Stage {
+  id        String       @id @default(cuid())
+  name      String
+  spaceId   String
+  space     Space @relation(fields: [spaceId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  variables Variable[]
+  
+  @@map("stage")
+}
+
+model Variable {
+  id        String  @id @default(cuid())
+  name      String
+  type      String
+  value     String
+  spaceId   String
+  stage     Stage    @relation(fields: [spaceId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@map("variable")
 }
