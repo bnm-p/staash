@@ -1,11 +1,7 @@
 "use client";
 
 import { authClient } from "@/lib/auth-client";
-import {
-	Avatar,
-	AvatarFallback,
-	AvatarImage,
-} from "@workspace/ui/components/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@workspace/ui/components/avatar";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -24,11 +20,7 @@ interface IUserProfileClientProps extends IUserProfileProps {
 	user: User | undefined;
 }
 
-export const UserProfileClient: FC<IUserProfileClientProps> = ({
-	className,
-	user,
-	...props
-}) => {
+export const UserProfileClient: FC<IUserProfileClientProps> = ({ className, user, ...props }) => {
 	const router = useRouter();
 
 	const handleLogOut = async () => {
@@ -41,10 +33,7 @@ export const UserProfileClient: FC<IUserProfileClientProps> = ({
 			<DropdownMenuTrigger asChild>
 				<button
 					type="button"
-					className={cn(
-						"h-full w-56 gap-2 flex items-center px-8 hover:bg-muted border-border border-l",
-						className,
-					)}
+					className={cn("h-full w-56 gap-2 flex items-center px-8 hover:bg-muted border-border border-l", className)}
 					{...props}
 				>
 					<div className="flex items-center gap-2">
@@ -57,12 +46,7 @@ export const UserProfileClient: FC<IUserProfileClientProps> = ({
 					<EllipsisVertical className="ml-auto h-4 w-4 shrink-0 opacity-50" />
 				</button>
 			</DropdownMenuTrigger>
-			<DropdownMenuContent
-				className="w-[calc(14rem+1px)] p-0"
-				align="end"
-				sideOffset={0}
-				alignOffset={-1}
-			>
+			<DropdownMenuContent className="w-[calc(14rem+1px)] p-0" align="end" sideOffset={0} alignOffset={-1}>
 				<DropdownMenuItem>
 					<UserIcon />
 					<span>Profile</span>

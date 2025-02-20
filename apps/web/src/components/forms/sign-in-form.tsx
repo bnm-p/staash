@@ -1,14 +1,7 @@
 "use client";
 
 import { Button } from "@workspace/ui/components/button";
-import {
-	Card,
-	CardContent,
-	CardHeader,
-	CardTitle,
-	CardDescription,
-	CardFooter,
-} from "@workspace/ui/components/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@workspace/ui/components/card";
 import { Input } from "@workspace/ui/components/input";
 import { Label } from "@workspace/ui/components/label";
 import { Checkbox } from "@workspace/ui/components/checkbox";
@@ -30,9 +23,7 @@ export const SignInForm: FC<ISignInFormProps> = ({ className, ...props }) => {
 		<Card className={cn("max-w-md relative", className)} {...props}>
 			<CardHeader>
 				<CardTitle className="text-lg md:text-xl">Sign In</CardTitle>
-				<CardDescription className="text-xs md:text-sm">
-					Enter your email below to login to your account
-				</CardDescription>
+				<CardDescription className="text-xs md:text-sm">Enter your email below to login to your account</CardDescription>
 			</CardHeader>
 			<CardContent>
 				<div className="grid gap-4">
@@ -91,18 +82,11 @@ export const SignInForm: FC<ISignInFormProps> = ({ className, ...props }) => {
 					<div className="h-4 my-1">
 						<div className="absolute left-0 right-0 flex items-center gap-x-4">
 							<div className="w-full h-px bg-muted" />
-							<span className="uppercase text-xs text-muted-foreground whitespace-nowrap">
-								or continue with
-							</span>
+							<span className="uppercase text-xs text-muted-foreground whitespace-nowrap">or continue with</span>
 							<div className="w-full h-px bg-muted" />
 						</div>
 					</div>
-					<div
-						className={cn(
-							"w-full gap-2 flex items-center",
-							"justify-between flex-col",
-						)}
-					>
+					<div className={cn("w-full gap-2 flex items-center", "justify-between flex-col")}>
 						{/* <Button
 							variant="outline"
 							className={cn("w-full gap-2")}
@@ -149,12 +133,7 @@ export const SignInForm: FC<ISignInFormProps> = ({ className, ...props }) => {
 								});
 							}}
 						>
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								width="1em"
-								height="1em"
-								viewBox="0 0 24 24"
-							>
+							<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
 								<title>Github</title>
 								<path
 									fill="currentColor"

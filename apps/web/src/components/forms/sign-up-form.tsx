@@ -1,14 +1,7 @@
 "use client";
 
 import { Button } from "@workspace/ui/components/button";
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardFooter,
-	CardHeader,
-	CardTitle,
-} from "@workspace/ui/components/card";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@workspace/ui/components/card";
 import { Input } from "@workspace/ui/components/input";
 import { Label } from "@workspace/ui/components/label";
 import { type FC, useState } from "react";
@@ -46,15 +39,10 @@ export const SignUpForm: FC<ISignUpFormProps> = ({ className, ...props }) => {
 	};
 
 	return (
-		<Card
-			className={cn("z-50 rounded-md rounded-t-none max-w-md", className)}
-			{...props}
-		>
+		<Card className={cn("z-50 rounded-md rounded-t-none max-w-md", className)} {...props}>
 			<CardHeader>
 				<CardTitle className="text-lg md:text-xl">Sign Up</CardTitle>
-				<CardDescription className="text-xs md:text-sm">
-					Enter your information to create an account
-				</CardDescription>
+				<CardDescription className="text-xs md:text-sm">Enter your information to create an account</CardDescription>
 			</CardHeader>
 			<CardContent>
 				<div className="grid gap-4">
@@ -124,22 +112,11 @@ export const SignUpForm: FC<ISignUpFormProps> = ({ className, ...props }) => {
 						<div className="flex items-end gap-4">
 							{imagePreview && (
 								<div className="relative w-16 h-16 rounded-sm overflow-hidden">
-									<Image
-										src={imagePreview}
-										alt="Profile preview"
-										layout="fill"
-										objectFit="cover"
-									/>
+									<Image src={imagePreview} alt="Profile preview" layout="fill" objectFit="cover" />
 								</div>
 							)}
 							<div className="flex items-center gap-2 w-full">
-								<Input
-									id="image"
-									type="file"
-									accept="image/*"
-									onChange={handleImageChange}
-									className="w-full"
-								/>
+								<Input id="image" type="file" accept="image/*" onChange={handleImageChange} className="w-full" />
 								{imagePreview && (
 									<X
 										className="cursor-pointer"
@@ -180,11 +157,7 @@ export const SignUpForm: FC<ISignUpFormProps> = ({ className, ...props }) => {
 							});
 						}}
 					>
-						{loading ? (
-							<Loader2 size={16} className="animate-spin" />
-						) : (
-							"Create an account"
-						)}
+						{loading ? <Loader2 size={16} className="animate-spin" /> : "Create an account"}
 					</Button>
 				</div>
 			</CardContent>

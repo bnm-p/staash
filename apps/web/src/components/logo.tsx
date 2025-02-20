@@ -6,13 +6,7 @@ interface ILogoProps extends React.ComponentProps<"div"> {}
 export const Logo: FC<ILogoProps> = ({ className, ...props }) => {
 	return (
 		<div className={cn("flex items-center gap-x-2", className)} {...props}>
-			<svg
-				viewBox="0 0 70 40"
-				fill="none"
-				xmlns="http://www.w3.org/2000/svg"
-				width={18}
-				height={18}
-			>
+			<svg viewBox="0 0 70 40" fill="none" xmlns="http://www.w3.org/2000/svg" width={18} height={18}>
 				<title>Logo</title>
 				<path
 					d="M37.2551 1.61586C38.1803 0.653384 39.4368 0.112671 40.7452 0.112671C46.6318 0.112671 52.1793 0.112674 57.6424 0.112685C68.6302 0.112708 74.1324 13.9329 66.3629 22.0156L49.4389 39.6217C48.662 40.43 47.3335 39.8575 47.3335 38.7144V23.2076L49.2893 21.1729C50.8432 19.5564 49.7427 16.7923 47.5451 16.7923H22.6667L37.2551 1.61586Z"

@@ -8,13 +8,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
 	const queryClient = new QueryClient();
 
 	return (
-		<NextThemesProvider
-			attribute="class"
-			defaultTheme="dark"
-			enableSystem
-			disableTransitionOnChange
-			enableColorScheme
-		>
+		<NextThemesProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange enableColorScheme>
 			<QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
 		</NextThemesProvider>
 	);

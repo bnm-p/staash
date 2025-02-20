@@ -2,24 +2,9 @@
 
 import { authClient } from "@/lib/auth-client";
 import type { Organization, Space } from "@prisma/client";
-import {
-	Avatar,
-	AvatarFallback,
-	AvatarImage,
-} from "@workspace/ui/components/avatar";
-import {
-	Command,
-	CommandEmpty,
-	CommandGroup,
-	CommandInput,
-	CommandItem,
-	CommandList,
-} from "@workspace/ui/components/command";
-import {
-	Popover,
-	PopoverContent,
-	PopoverTrigger,
-} from "@workspace/ui/components/popover";
+import { Avatar, AvatarFallback, AvatarImage } from "@workspace/ui/components/avatar";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@workspace/ui/components/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@workspace/ui/components/popover";
 import { cn } from "@workspace/ui/lib/utils";
 import { Check, ChevronsUpDown, Plus } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
@@ -31,19 +16,12 @@ interface IOrgSwitchClientProps extends IOrgSwitchProps {
 	organizations: OrganizationWithSpaces[];
 }
 
-export const OrgSwitchClient: FC<IOrgSwitchClientProps> = ({
-	className,
-	organizations,
-	...props
-}) => {
+export const OrgSwitchClient: FC<IOrgSwitchClientProps> = ({ className, organizations, ...props }) => {
 	const [open, setOpen] = useState<boolean>(false);
 	const router = useRouter();
 	const pathname = usePathname();
-	const { data: activeOrganization, isPending } =
-		authClient.useActiveOrganization();
-	const [hoveredOrg, setHoveredOrg] = useState<Partial<Organization> | null>(
-		activeOrganization,
-	);
+	const { data: activeOrganization, isPending } = authClient.useActiveOrganization();
+	const [hoveredOrg, setHoveredOrg] = useState<Partial<Organization> | null>(activeOrganization);
 	const [spaces, setSpaces] = useState<Space[]>([]);
 	const [selectedSpace, setSelectedSpace] = useState<Space | null>(null);
 
@@ -65,8 +43,7 @@ export const OrgSwitchClient: FC<IOrgSwitchClientProps> = ({
 	useEffect(() => {
 		if (!hoveredOrg) return;
 
-		const spaces =
-			organizations.find((org) => org.id === hoveredOrg.id)?.spaces ?? [];
+		const spaces = organizations.find((org) => org.id === hoveredOrg.id)?.spaces ?? [];
 
 		setSpaces(spaces);
 	}, [organizations, hoveredOrg]);
@@ -115,12 +92,7 @@ export const OrgSwitchClient: FC<IOrgSwitchClientProps> = ({
 		if (segments.length >= 2) {
 			const orgSlug = segments[0];
 			const spaceSlug = segments[1];
-			if (
-				orgSlug &&
-				spaceSlug &&
-				orgSlug !== "create" &&
-				spaceSlug !== "create"
-			) {
+			if (orgSlug && spaceSlug && orgSlug !== "create" && spaceSlug !== "create") {
 				const org = organizations.find((org) => org.slug === orgSlug);
 				if (!org) {
 					router.push("/");
@@ -171,10 +143,7 @@ export const OrgSwitchClient: FC<IOrgSwitchClientProps> = ({
 				>
 					<div className="flex items-center gap-2">
 						<Avatar className="size-8">
-							<AvatarImage
-								src={activeOrganization?.logo || ""}
-								alt={activeOrganization?.name}
-							/>
+							<AvatarImage src={activeOrganization?.logo || ""} alt={activeOrganization?.name} />
 							<AvatarFallback>{activeOrganization?.name[0]}</AvatarFallback>
 						</Avatar>
 						<span className="text-sm truncate max-w-[130px]">
@@ -185,19 +154,11 @@ export const OrgSwitchClient: FC<IOrgSwitchClientProps> = ({
 					<ChevronsUpDown className="ml-auto h-4 w-4 shrink-0 opacity-50" />
 				</button>
 			</PopoverTrigger>
-			<PopoverContent
-				className="w-[516px] p-0 border-none"
-				align="start"
-				alignOffset={-1}
-				sideOffset={0}
-			>
+			<PopoverContent className="w-[516px] p-0 border-none" align="start" alignOffset={-1} sideOffset={0}>
 				<div className="grid grid-cols-2 overflow-hidden border bg-background shadow-sm">
 					<div className="border-r">
 						<Command className="h-full border-none">
-							<CommandInput
-								ref={orgsCommandRef}
-								placeholder="Find Organization..."
-							/>
+							<CommandInput ref={orgsCommandRef} placeholder="Find Organization..." />
 							<CommandList>
 								<CommandEmpty>No organizations found.</CommandEmpty>
 								<CommandGroup heading="Organizations" className="p-0">
@@ -213,14 +174,7 @@ export const OrgSwitchClient: FC<IOrgSwitchClientProps> = ({
 												<AvatarFallback>{org.name[0]}</AvatarFallback>
 											</Avatar>
 											<span>{org.name}</span>
-											<Check
-												className={cn(
-													"ml-auto h-4 w-4",
-													activeOrganization?.id === org.id
-														? "opacity-100"
-														: "opacity-0",
-												)}
-											/>
+											<Check className={cn("ml-auto h-4 w-4", activeOrganization?.id === org.id ? "opacity-100" : "opacity-0")} />
 										</CommandItem>
 									))}
 									<CommandItem
@@ -238,10 +192,7 @@ export const OrgSwitchClient: FC<IOrgSwitchClientProps> = ({
 					</div>
 					<div>
 						<Command className="h-full border-none">
-							<CommandInput
-								ref={spacesCommandRef}
-								placeholder="Find Space..."
-							/>
+							<CommandInput ref={spacesCommandRef} placeholder="Find Space..." />
 							<CommandList>
 								<CommandGroup heading="Spaces" className="p-0">
 									{spaces.map((space) => (
@@ -261,14 +212,7 @@ export const OrgSwitchClient: FC<IOrgSwitchClientProps> = ({
 												<AvatarFallback>{space.name[0]}</AvatarFallback>
 											</Avatar>
 											<span>{space.name}</span>
-											<Check
-												className={cn(
-													"ml-auto h-4 w-4",
-													selectedSpace?.id === space.id
-														? "opacity-100"
-														: "opacity-0",
-												)}
-											/>
+											<Check className={cn("ml-auto h-4 w-4", selectedSpace?.id === space.id ? "opacity-100" : "opacity-0")} />
 										</CommandItem>
 									))}
 									<CommandItem
