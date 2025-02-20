@@ -18,6 +18,7 @@ export const OrgSwitch: FC<IOrgSwitchProps> = async ({ ...props }) => {
 	for (const member of usersMembers) {
 		const org = await db.organization.findUnique({
 			where: { id: member.organizationId },
+			include: { spaces: true },
 		});
 
 		if (!org) continue;

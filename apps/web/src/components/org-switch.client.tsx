@@ -1,7 +1,7 @@
 "use client";
 
 import { authClient } from "@/lib/auth-client";
-import type { Organization } from "@prisma/client";
+import type { Organization, Space } from "@prisma/client";
 import {
 	Avatar,
 	AvatarFallback,
@@ -25,9 +25,10 @@ import { Check, ChevronsUpDown, Plus } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { type FC, useCallback, useEffect, useRef, useState } from "react";
 import type { IOrgSwitchProps } from "./org-switch";
+import type { OrganizationWithSpaces } from "@/lib/types";
 
 interface IOrgSwitchClientProps extends IOrgSwitchProps {
-	organizations: Organization[];
+	organizations: OrganizationWithSpaces[];
 }
 
 export const OrgSwitchClient: FC<IOrgSwitchClientProps> = ({
@@ -40,6 +41,11 @@ export const OrgSwitchClient: FC<IOrgSwitchClientProps> = ({
 	const pathname = usePathname();
 	const { data: activeOrganization, isPending } =
 		authClient.useActiveOrganization();
+	const [hoveredOrg, setHoveredOrg] = useState<Partial<Organization> | null>(
+		activeOrganization,
+	);
+	const [spaces, setSpaces] = useState<Space[]>([]);
+	const [selectedSpace, setSelectedSpace] = useState<Space | null>(null);
 
 	const orgsCommandRef = useRef<HTMLInputElement>(null);
 	const spacesCommandRef = useRef<HTMLInputElement>(null);
@@ -57,6 +63,15 @@ export const OrgSwitchClient: FC<IOrgSwitchClientProps> = ({
 	);
 
 	useEffect(() => {
+		if (!hoveredOrg) return;
+
+		const spaces =
+			organizations.find((org) => org.id === hoveredOrg.id)?.spaces ?? [];
+
+		setSpaces(spaces);
+	}, [organizations, hoveredOrg]);
+
+	useEffect(() => {
 		document.addEventListener("keydown", handleKeyDown);
 		return () => document.removeEventListener("keydown", handleKeyDown);
 	}, [handleKeyDown]);
@@ -69,6 +84,7 @@ export const OrgSwitchClient: FC<IOrgSwitchClientProps> = ({
 				organizationSlug: org.slug,
 			});
 
+			setSelectedSpace(null);
 			setOpen(false);
 			router.refresh();
 			router.push(`/${org.slug}`);
@@ -85,15 +101,54 @@ export const OrgSwitchClient: FC<IOrgSwitchClientProps> = ({
 				router.push("/");
 				return;
 			}
-			// Set active organization regardless
-			authClient.organization.setActive({ organizationSlug: org.slug });
 
-			// Only redirect if there is no additional path (i.e. only the org slug)
+			authClient.organization.setActive({ organizationId: org.id });
+
 			if (segments.length === 1) {
 				router.push(`/${org.slug}`);
 			}
 		}
 	}, [pathname, organizations, router]);
+
+	useEffect(() => {
+		const segments = pathname.split("/").filter(Boolean);
+		if (segments.length >= 2) {
+			const orgSlug = segments[0];
+			const spaceSlug = segments[1];
+			if (
+				orgSlug &&
+				spaceSlug &&
+				orgSlug !== "create" &&
+				spaceSlug !== "create"
+			) {
+				const org = organizations.find((org) => org.slug === orgSlug);
+				if (!org) {
+					router.push("/");
+					return;
+				}
+
+				if (!hoveredOrg || hoveredOrg.id !== org.id) {
+					setHoveredOrg(org);
+				}
+
+				const foundSpace = org.spaces.find((space) => space.slug === spaceSlug);
+				if (foundSpace) {
+					setSelectedSpace(foundSpace);
+				} else {
+					router.push(`/${org.slug}`);
+				}
+			}
+		}
+	}, [pathname, organizations, router, hoveredOrg]);
+
+	const handleSpaceSelect = useCallback(
+		(slug: string) => {
+			const selectedSpace = spaces.find((space) => space.slug === slug) || null;
+			setSelectedSpace(selectedSpace);
+			router.push(`/${hoveredOrg?.slug}/${slug}`);
+		},
+		[router, hoveredOrg, spaces],
+	);
 
 	const handleCreateOrg = () => {
 		router.push("/create/org");
@@ -121,9 +176,9 @@ export const OrgSwitchClient: FC<IOrgSwitchClientProps> = ({
 							/>
 							<AvatarFallback>{activeOrganization?.name[0]}</AvatarFallback>
 						</Avatar>
-						<span className="text-sm">
+						<span className="text-sm truncate max-w-[130px]">
 							{activeOrganization?.name}
-							{/* {selectedSpace ? ` / ${selectedSpace.name}` : ""} */}
+							{selectedSpace ? ` / ${selectedSpace.name}` : ""}
 						</span>
 					</div>
 					<ChevronsUpDown className="ml-auto h-4 w-4 shrink-0 opacity-50" />
@@ -148,6 +203,7 @@ export const OrgSwitchClient: FC<IOrgSwitchClientProps> = ({
 									{organizations.map((org) => (
 										<CommandItem
 											key={org.id}
+											onMouseEnter={() => setHoveredOrg(org)}
 											onSelect={() => handleOrgChange(org)}
 											className="flex items-center gap-2 px-4 py-2 data-[selected=true]:bg-muted"
 										>
@@ -186,28 +242,23 @@ export const OrgSwitchClient: FC<IOrgSwitchClientProps> = ({
 								placeholder="Find Space..."
 							/>
 							<CommandList>
-								<CommandEmpty>No spaces found.</CommandEmpty>
 								<CommandGroup heading="Spaces" className="p-0">
-									{/* {spaces.map((space) => (
+									{spaces.map((space) => (
 										<CommandItem
 											key={space.id}
 											onSelect={() => {
-												setSelectedSpace(space);
 												setOpen(false);
+												handleSpaceSelect(space.slug);
 											}}
 											className="flex items-center gap-2 px-4 py-2 data-[selected=true]:bg-muted"
 										>
-											<div className="flex h-6 w-6 items-center justify-center border bg-muted">
-												{space.icon ? (
-													<img
-														src={space.icon || "/placeholder.svg"}
-														alt=""
-														className="h-4 w-4"
-													/>
-												) : (
-													<div className="h-4 w-4" />
-												)}
-											</div>
+											<Avatar className="h-6 w-6">
+												{/* <AvatarImage
+													src={space?.image || ""}
+													alt={space.name}
+												/> */}
+												<AvatarFallback>{space.name[0]}</AvatarFallback>
+											</Avatar>
 											<span>{space.name}</span>
 											<Check
 												className={cn(
@@ -218,7 +269,7 @@ export const OrgSwitchClient: FC<IOrgSwitchClientProps> = ({
 												)}
 											/>
 										</CommandItem>
-									))} */}
+									))}
 									<CommandItem
 										onSelect={handleCreateSpace}
 										className="flex items-center gap-2 px-4 py-2 text-sm data-[selected=true]:bg-muted"
@@ -226,7 +277,7 @@ export const OrgSwitchClient: FC<IOrgSwitchClientProps> = ({
 										<div className="flex h-6 w-6 items-center justify-center border border-dashed">
 											<Plus className="h-4 w-4" />
 										</div>
-										Create Space
+										Create new Space
 									</CommandItem>
 								</CommandGroup>
 							</CommandList>
