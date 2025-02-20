@@ -46,7 +46,6 @@ export const CreateSpaceForm: FC<ICreateOrgFormProps> = ({
 	});
 
 	const watchName = form.watch("name", "");
-	const watchSlug = form.watch("slug", "");
 
 	useEffect(() => {
 		if (autoSlug && watchName) {

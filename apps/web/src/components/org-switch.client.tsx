@@ -155,6 +155,7 @@ export const OrgSwitchClient: FC<IOrgSwitchClientProps> = ({
 	};
 
 	const handleCreateSpace = () => {
+		void authClient.organization.setActive({ organizationId: hoveredOrg?.id });
 		router.push("/create/space");
 	};
 
