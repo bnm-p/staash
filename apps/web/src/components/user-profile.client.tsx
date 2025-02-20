@@ -1,21 +1,24 @@
 "use client";
 
 import { authClient } from "@/lib/auth-client";
-import { cn } from "@workspace/ui/lib/utils";
-import type { FC } from "react";
-import Image from "next/image";
-import { Button } from "@workspace/ui/components/button";
+import {
+	Avatar,
+	AvatarFallback,
+	AvatarImage,
+} from "@workspace/ui/components/avatar";
 import {
 	DropdownMenu,
-	DropdownMenuTrigger,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuShortcut,
+	DropdownMenuTrigger,
 } from "@workspace/ui/components/dropdown-menu";
-import { Cog, LogOut, UserIcon } from "lucide-react";
+import { cn } from "@workspace/ui/lib/utils";
+import type { User } from "better-auth";
+import { Cog, EllipsisVertical, LogOut, UserIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
+import type { FC } from "react";
 import type { IUserProfileProps } from "./user-profile";
-import type { InferSessionAPI, Session, User } from "better-auth";
 
 interface IUserProfileClientProps extends IUserProfileProps {
 	user: User | undefined;
@@ -36,33 +39,30 @@ export const UserProfileClient: FC<IUserProfileClientProps> = ({
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
-				<Button
+				<button
 					type="button"
-					variant="ghost"
 					className={cn(
-						"text-sm font-medium flex items-center gap-2",
+						"h-full w-56 gap-2 flex items-center px-8 hover:bg-muted border-border border-l",
 						className,
 					)}
 					{...props}
 				>
-					{user?.name}
-					<div className="relative size-6 overflow-hidden bg-muted flex items-center justify-center">
-						{user?.image ? (
-							<Image
-								src={user?.image}
-								alt={`${user?.name}'s image`}
-								fill
-								className="object-cover"
-							/>
-						) : (
-							<span className="text-xs text-muted-foreground scale-75">
-								{user?.name?.[0]}
-							</span>
-						)}
+					<div className="flex items-center gap-2">
+						<Avatar className="size-8">
+							<AvatarImage src={user?.image || ""} alt={user?.name} />
+							<AvatarFallback>{user?.name[0]}</AvatarFallback>
+						</Avatar>
+						<span className="text-sm">{user?.name}</span>
 					</div>
-				</Button>
+					<EllipsisVertical className="ml-auto h-4 w-4 shrink-0 opacity-50" />
+				</button>
 			</DropdownMenuTrigger>
-			<DropdownMenuContent className="w-56 p-0" align="end" sideOffset={10}>
+			<DropdownMenuContent
+				className="w-[calc(14rem+1px)] p-0"
+				align="end"
+				sideOffset={0}
+				alignOffset={-1}
+			>
 				<DropdownMenuItem>
 					<UserIcon />
 					<span>Profile</span>
