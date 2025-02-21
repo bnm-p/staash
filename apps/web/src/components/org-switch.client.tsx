@@ -7,10 +7,11 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import { Popover, PopoverContent, PopoverTrigger } from "@workspace/ui/components/popover";
 import { cn } from "@workspace/ui/lib/utils";
 import { Check, ChevronsUpDown, Plus } from "lucide-react";
-import { usePathname, useRouter } from "next/navigation";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import { type FC, useCallback, useEffect, useRef, useState } from "react";
 import type { IOrgSwitchProps } from "./org-switch";
 import type { OrganizationWithSpaces } from "@/lib/types";
+import { useTransitionRouter } from "next-view-transitions";
 
 interface IOrgSwitchClientProps extends IOrgSwitchProps {
 	organizations: OrganizationWithSpaces[];
@@ -20,6 +21,7 @@ export const OrgSwitchClient: FC<IOrgSwitchClientProps> = ({ className, organiza
 	const [open, setOpen] = useState<boolean>(false);
 	const router = useRouter();
 	const pathname = usePathname();
+	const params = useParams<{ orgSlug?: string; spaceSlug?: string }>();
 	const { data: activeOrganization, isPending } = authClient.useActiveOrganization();
 	const [hoveredOrg, setHoveredOrg] = useState<Partial<Organization> | null>(activeOrganization);
 	const [spaces, setSpaces] = useState<Space[]>([]);
@@ -64,14 +66,14 @@ export const OrgSwitchClient: FC<IOrgSwitchClientProps> = ({ className, organiza
 			setSelectedSpace(null);
 			setOpen(false);
 			router.refresh();
-			router.push(`/${org.slug}`);
+			router.push(`/orgs/${org.slug}`);
 		},
 		[router],
 	);
 
 	useEffect(() => {
 		const segments = pathname.split("/").filter(Boolean);
-		const orgSlug = segments[0];
+		const { orgSlug } = params;
 		if (orgSlug && orgSlug !== "create") {
 			const org = organizations.find((org) => org.slug === orgSlug);
 			if (!org) {
@@ -82,16 +84,16 @@ export const OrgSwitchClient: FC<IOrgSwitchClientProps> = ({ className, organiza
 			authClient.organization.setActive({ organizationId: org.id });
 
 			if (segments.length === 1) {
-				router.push(`/${org.slug}`);
+				router.push(`/orgs/${org.slug}`);
 			}
 		}
-	}, [pathname, organizations, router]);
+	}, [pathname, organizations, router, params]);
 
 	useEffect(() => {
 		const segments = pathname.split("/").filter(Boolean);
-		if (segments.length >= 2) {
-			const orgSlug = segments[0];
-			const spaceSlug = segments[1];
+		if (segments.length >= 3) {
+			const { orgSlug, spaceSlug } = params;
+
 			if (orgSlug && spaceSlug && orgSlug !== "create" && spaceSlug !== "create") {
 				const org = organizations.find((org) => org.slug === orgSlug);
 				if (!org) {
@@ -107,17 +109,18 @@ export const OrgSwitchClient: FC<IOrgSwitchClientProps> = ({ className, organiza
 				if (foundSpace) {
 					setSelectedSpace(foundSpace);
 				} else {
-					router.push(`/${org.slug}`);
+					router.push(`/orgs/${org.slug}`);
 				}
 			}
 		}
-	}, [pathname, organizations, router, hoveredOrg]);
+	}, [pathname, organizations, router, hoveredOrg, params]);
 
 	const handleSpaceSelect = useCallback(
 		(slug: string) => {
 			const selectedSpace = spaces.find((space) => space.slug === slug) || null;
 			setSelectedSpace(selectedSpace);
-			router.push(`/${hoveredOrg?.slug}/${slug}`);
+			router.refresh();
+			router.push(`/orgs/${hoveredOrg?.slug}/spaces/${slug}`);
 		},
 		[router, hoveredOrg, spaces],
 	);

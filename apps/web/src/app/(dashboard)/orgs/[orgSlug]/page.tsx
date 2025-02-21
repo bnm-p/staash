@@ -5,9 +5,7 @@ interface IOrgSlugPageProps {
 }
 
 const OrgSlugPage: NextPage<IOrgSlugPageProps> = async ({ params }) => {
-	const { orgSlug } = await params;
-
-	return <></>;
+	return <>org page</>;
 };
 
 export default OrgSlugPage;
