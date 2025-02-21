@@ -54,7 +54,7 @@ export const orgRouter = new Hono()
 			}),
 		),
 		async (c) => {
-			const orgSlug = c.req.param("orgSlug");
+			const { orgSlug } = c.req.valid("param");
 
 			return c.json(await orgs.getOrgBySlug(orgSlug));
 		},
@@ -69,7 +69,7 @@ export const orgRouter = new Hono()
 		),
 		async (c) => {
 			const user = await users.getUser(c);
-			const orgSlug = c.req.param("orgSlug");
+			const { orgSlug } = c.req.valid("param");
 
 			const org = await orgs.getOrgBySlug(orgSlug);
 
