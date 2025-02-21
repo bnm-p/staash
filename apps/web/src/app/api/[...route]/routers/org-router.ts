@@ -74,6 +74,7 @@ export const orgRouter = new Hono()
 			const org = await orgs.getOrgBySlug(orgSlug);
 
 			const member = await db.member.findFirst({
+				//TODO auf FindUnique ändern
 				where: { organizationId: org.id, userId: user.id },
 			});
 
