@@ -1,6 +1,7 @@
 import { db } from "@/lib/db";
 import type { FC } from "react";
 import { OrgHeaderClient } from "./org-header.client";
+import { headers } from "next/headers";
 
 export interface IOrgHeaderProps extends React.ComponentProps<"div"> {
 	orgSlug?: string;
@@ -8,6 +9,9 @@ export interface IOrgHeaderProps extends React.ComponentProps<"div"> {
 }
 
 export const OrgHeader: FC<IOrgHeaderProps> = async ({ className, orgSlug, spaceSlug, ...props }) => {
+	const h = await headers();
+	const pathname = h.get("x-path");
+
 	const org = await db.organization.findUnique({
 		where: { slug: orgSlug },
 		include: { spaces: true },
@@ -26,5 +30,5 @@ export const OrgHeader: FC<IOrgHeaderProps> = async ({ className, orgSlug, space
 			})
 		: null;
 
-	return <OrgHeaderClient {...props} organization={org} space={space} />;
+	return <OrgHeaderClient {...props} organization={org} space={space} isCreate={pathname?.endsWith("/create")} />;
 };
