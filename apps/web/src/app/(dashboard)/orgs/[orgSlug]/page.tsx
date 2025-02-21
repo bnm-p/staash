@@ -31,7 +31,9 @@ const OrgSlugPage: NextPage<IOrgSlugPageProps> = async ({ params }) => {
 				<div className="border-border border-b h-fit flex justify-end">
 					<button type="button" className="flex h-full w-56 items-center gap-2 border-border border-l px-8 hover:bg-muted">
 						<div className="flex items-center gap-2">
-							<span className="p-2">Create Space</span>
+							<a href={`/orgs/${orgSlug}/create`} className="flex items-center gap-2">
+								<span className="p-2">Create Space</span>
+							</a>
 						</div>
 						<Plus className="ml-auto h-4 w-4 shrink-0 opacity-50" />
 					</button>
