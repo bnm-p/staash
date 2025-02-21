@@ -81,7 +81,7 @@ model Verification {
 model Organization {
   id          String       @id @default(cuid())
   name        String
-  slug        String?
+  slug        String    
   logo        String?
   createdAt   DateTime     @default(now())
   metadata    String?
@@ -128,7 +128,7 @@ model Space {
   createdAt      DateTime @default(now())
   stages         Stage[]
 
-  @@unique([slug])
+  @@unique([slug,organizationId])
   @@map("space")
 }
 
