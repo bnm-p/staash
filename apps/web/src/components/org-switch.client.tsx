@@ -75,6 +75,7 @@ export const OrgSwitchClient: FC<IOrgSwitchClientProps> = ({ className, organiza
 		const segments = pathname.split("/").filter(Boolean);
 		const { orgSlug } = params;
 		if (orgSlug && orgSlug !== "create") {
+			setSelectedSpace(null);
 			const org = organizations.find((org) => org.slug === orgSlug);
 			if (!org) {
 				router.push("/");
@@ -111,6 +112,8 @@ export const OrgSwitchClient: FC<IOrgSwitchClientProps> = ({ className, organiza
 				} else {
 					router.push(`/orgs/${org.slug}`);
 				}
+			} else {
+				setSelectedSpace(null);
 			}
 		}
 	}, [pathname, organizations, router, hoveredOrg, params]);
