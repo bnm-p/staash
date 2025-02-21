@@ -25,6 +25,7 @@ const formSchema = z.object({
 });
 
 const COLORS = ["#f43f5e", "#34d399", "#a3e635", "#38bdf8", "#6366f1", "#a855f7"];
+const randomColor = COLORS[Math.floor(Math.random() * COLORS.length)];
 
 export const CreateOrgForm: FC<ICreateOrgFormProps> = ({ className, ...props }) => {
 	const router = useRouter();
@@ -51,8 +52,6 @@ export const CreateOrgForm: FC<ICreateOrgFormProps> = ({ className, ...props }) 
 			reader.readAsDataURL(file);
 		}
 	};
-
-	const randomColor = COLORS[Math.floor(Math.random() * COLORS.length)];
 
 	const watchName = form.watch("name", "");
 	const watchSlug = form.watch("slug", "");
@@ -85,78 +84,78 @@ export const CreateOrgForm: FC<ICreateOrgFormProps> = ({ className, ...props }) 
 	}
 
 	return (
-		<div className="grid w-full grid-cols-1 gap-4 md:grid-cols-2">
-			<div>
-				<div>
-					<h1 className="font-semibold text-2xl">Create Organization</h1>
-					<p className="text-muted-foreground">Set up your new organization in seconds</p>
-				</div>
-				<Form {...form}>
-					<form onSubmit={form.handleSubmit(onSubmit)} className={cn("w-full space-y-8 py-10", className)} {...props}>
-						<FormField
-							control={form.control}
-							name="name"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Name</FormLabel>
-									<FormControl>
-										<Input type="" className="max-w-md" placeholder="My Organization" {...field} />
-									</FormControl>
-									<FormDescription>Name of your organization</FormDescription>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
+		<div className="grid w-full grid-cols-1 md:grid-cols-[1fr_1.5fr]">
+			<Form {...form}>
+				<form
+					onSubmit={form.handleSubmit(onSubmit)}
+					className={cn("w-full max-w-lg divide-y divide-border border-border border-r border-b", className)}
+					{...props}
+				>
+					<FormField
+						control={form.control}
+						name="name"
+						render={({ field }) => (
+							<FormItem className="px-8 py-6">
+								<FormLabel>Name</FormLabel>
+								<FormControl>
+									<Input type="" placeholder="My Organization" {...field} />
+								</FormControl>
+								<FormDescription>Name of your organization</FormDescription>
+								<FormMessage />
+							</FormItem>
+						)}
+					/>
 
-						<FormField
-							control={form.control}
-							name="slug"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Slug</FormLabel>
-									<FormControl className="flex items-stretch">
-										<div className="max-w-md">
-											<div className="flex items-center border border-border border-r-0 bg-muted px-4 py-2 text-muted-foreground text-sm">
-												staash.app/
-											</div>
-											<Input
-												type=""
-												placeholder="my-organization"
-												{...field}
-												onChange={(e) => {
-													setAutoSlug(false);
-													field.onChange(e);
-												}}
-											/>
+					<FormField
+						control={form.control}
+						name="slug"
+						render={({ field }) => (
+							<FormItem className="px-8 py-6">
+								<FormLabel>Slug</FormLabel>
+								<FormControl className="flex items-stretch">
+									<div>
+										<div className="flex items-center border border-border border-r-0 bg-muted px-4 py-2 text-muted-foreground text-sm">
+											staash.app/
 										</div>
-									</FormControl>
-									<FormDescription>URL slug of your organization</FormDescription>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
+										<Input
+											type=""
+											placeholder="my-organization"
+											{...field}
+											onChange={(e) => {
+												setAutoSlug(false);
+												field.onChange(e);
+											}}
+										/>
+									</div>
+								</FormControl>
+								<FormDescription>URL slug of your organization</FormDescription>
+								<FormMessage />
+							</FormItem>
+						)}
+					/>
 
-						<FormField
-							control={form.control}
-							name="logo"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Logo</FormLabel>
-									<FormControl>
-										<Input type="file" accept="image/*" {...field} className="max-w-md" onChange={handleLogoChange} />
-									</FormControl>
-									<FormDescription>Upload a logo for your organization</FormDescription>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
+					<FormField
+						control={form.control}
+						name="logo"
+						render={({ field }) => (
+							<FormItem className="px-8 py-6">
+								<FormLabel>Logo</FormLabel>
+								<FormControl>
+									<Input type="file" accept="image/*" {...field} onChange={handleLogoChange} />
+								</FormControl>
+								<FormDescription>Upload a logo for your organization</FormDescription>
+								<FormMessage />
+							</FormItem>
+						)}
+					/>
 
-						<Button type="submit" className="w-full max-w-md">
+					<div className="px-8 py-6">
+						<Button type="submit" className="w-full">
 							Create Organization
 						</Button>
-					</form>
-				</Form>
-			</div>
+					</div>
+				</form>
+			</Form>
 			<div className="flex items-center justify-center">
 				<div className="w-full max-w-md border border-border bg-background p-4">
 					<div className="flex items-start gap-4">
