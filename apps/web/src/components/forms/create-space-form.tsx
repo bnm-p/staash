@@ -48,10 +48,13 @@ export const CreateSpaceForm: FC<ICreateOrgFormProps> = ({ className, ...props }
 				throw new Error("No active organization");
 			}
 
-			const res = await client.api.org.space.$post({
+			const res = await client.api.orgs[":orgSlug"].spaces.$post({
 				form: {
 					...values,
 					orgId: activeOrganization.id,
+				},
+				param: {
+					orgSlug: activeOrganization.slug,
 				},
 			});
 

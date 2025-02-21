@@ -1,11 +1,16 @@
+import { Organization } from "./../../../../../../../node_modules/.pnpm/@prisma+client@6.4.0_prisma@6.4.0_typescript@5.7.2__typescript@5.7.2/node_modules/.prisma/client/index.d";
 import { Hono } from "hono";
 import { z } from "zod";
 import { zValidator } from "@hono/zod-validator";
 import { db } from "@/lib/db";
 import { HTTPException } from "hono/http-exception";
 import { spaceRouter } from "./space-router";
+import { orgs } from "@/queries/orgs";
+import { users } from "@/queries/users";
+import { orgMiddleware } from "../middleware/org-middleware";
 
 export const orgRouter = new Hono()
+	.route("/:orgSlug/spaces", spaceRouter)
 	.post(
 		"/",
 		zValidator(
@@ -19,11 +24,7 @@ export const orgRouter = new Hono()
 		async (c) => {
 			const validate = c.req.valid("form");
 
-			const user = c.get("user");
-
-			if (!user) {
-				throw new HTTPException(401, { message: "unauthorized" });
-			}
+			const user = await users.getUser(c);
 
 			const org = await db.organization.create({
 				data: {
@@ -44,4 +45,46 @@ export const orgRouter = new Hono()
 			return c.json(org);
 		},
 	)
-	.route("/space", spaceRouter);
+	.get(
+		"/:orgSlug",
+		zValidator(
+			"param",
+			z.object({
+				orgSlug: z.string(),
+			}),
+		),
+		async (c) => {
+			const orgSlug = c.req.param("orgSlug");
+
+			return c.json(await orgs.getOrgBySlug(orgSlug));
+		},
+	)
+	.delete(
+		"/:orgSlug",
+		zValidator(
+			"param",
+			z.object({
+				orgSlug: z.string(),
+			}),
+		),
+		async (c) => {
+			const user = await users.getUser(c);
+			const orgSlug = c.req.param("orgSlug");
+
+			const org = await orgs.getOrgBySlug(orgSlug);
+
+			const member = await db.member.findFirst({
+				where: { organizationId: org.id, userId: user.id },
+			});
+
+			if (member?.role !== "owner") {
+				throw new HTTPException(403, { message: "Forbidden: Only Owner is alowed to delete Organization" });
+			}
+
+			await db.organization.delete({
+				where: { id: org.id },
+			});
+
+			return c.json({ message: "Organization deleted successfully" });
+		},
+	);

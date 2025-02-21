@@ -1,4 +1,5 @@
 import { db } from "@/lib/db";
+import { orgs } from "@/queries/orgs";
 import type { NextPage } from "next";
 import { notFound } from "next/navigation";
 
@@ -9,11 +10,13 @@ interface ISpaceSlugPageProps {
 const SpaceSlugPage: NextPage<ISpaceSlugPageProps> = async ({ params }) => {
 	const { orgSlug, spaceSlug } = await params;
 
+	const org = await orgs.getOrgBySlug(orgSlug);
+
 	const space = await db.space.findUnique({
 		where: {
-			slug: spaceSlug,
-			organization: {
-				slug: orgSlug,
+			slug_organizationId: {
+				slug: spaceSlug,
+				organizationId: org.id,
 			},
 		},
 	});
