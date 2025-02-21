@@ -3,6 +3,7 @@ import { cors } from "hono/cors";
 import { handle } from "hono/vercel";
 import { auth } from "@/lib/auth";
 import { orgRouter } from "./routers/org-router";
+import { orgMiddleware } from "./middleware/org-middleware";
 
 export const runtime = "edge";
 
@@ -41,13 +42,17 @@ app.use(
 	}),
 );
 
+app.use("/orgs/:orgSlug/*", orgMiddleware);
+
 app.on(["POST", "GET"], "/auth/*", (c) => {
 	return auth.handler(c.req.raw);
 });
 
-const routes = app.route("/org", orgRouter);
+const routes = app.route("/orgs", orgRouter);
 
 export const GET = handle(app);
 export const POST = handle(app);
+export const DELETE = handle(app);
+export const PUT = handle(app);
 
 export type AppType = typeof routes;
