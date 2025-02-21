@@ -35,4 +35,4 @@ npm-debug.log*
 .DS_Store
 *.pem
 
-app/[orgSlug]/[spaceSlug]/demo/
+**/demo/
