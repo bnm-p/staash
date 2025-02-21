@@ -62,7 +62,7 @@ export const CreateSpaceForm: FC<ICreateOrgFormProps> = ({ className, ...props }
 
 			toast.success("Space created");
 			router.refresh();
-			router.push(`/${activeOrganization.slug}/${data.slug}`);
+			router.push(`/orgs/${activeOrganization.slug}/spaces/${data.slug}`);
 		} catch (error) {
 			console.error("Form submission error", error);
 			toast.error("Failed to submit the form. Please try again.");
