@@ -22,7 +22,7 @@ export const OrgSwitchClient: FC<IOrgSwitchClientProps> = ({ className, organiza
 	const router = useRouter();
 	const pathname = usePathname();
 	const params = useParams<{ orgSlug?: string; spaceSlug?: string }>();
-	const { data: activeOrganization, isPending } = authClient.useActiveOrganization();
+	const { data: activeOrganization } = authClient.useActiveOrganization();
 	const [hoveredOrg, setHoveredOrg] = useState<Partial<Organization> | null>(activeOrganization);
 	const [spaces, setSpaces] = useState<Space[]>([]);
 	const [selectedSpace, setSelectedSpace] = useState<Space | null>(null);
@@ -129,12 +129,15 @@ export const OrgSwitchClient: FC<IOrgSwitchClientProps> = ({ className, organiza
 	);
 
 	const handleCreateOrg = () => {
-		router.push("/create/org");
+		setOpen(false);
+		router.push("/create");
+		router.refresh();
 	};
 
 	const handleCreateSpace = () => {
-		void authClient.organization.setActive({ organizationId: hoveredOrg?.id });
-		router.push("/create/space");
+		setOpen(false);
+		router.push(`/orgs/${hoveredOrg?.slug}/create`);
+		router.refresh();
 	};
 
 	return (

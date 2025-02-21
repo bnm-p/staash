@@ -14,9 +14,10 @@ import { Button } from "@workspace/ui/components/button";
 interface IOrgHeaderClientProps extends IOrgHeaderProps {
 	organization: Organization;
 	space?: Space | null;
+	isCreate?: boolean;
 }
 
-export const OrgHeaderClient: FC<IOrgHeaderClientProps> = ({ className, organization, space, ...props }) => {
+export const OrgHeaderClient: FC<IOrgHeaderClientProps> = ({ className, organization, space, isCreate = false, ...props }) => {
 	const router = useRouter();
 	const params = useParams<{ orgSlug: string; spaceSlug?: string }>();
 
@@ -56,8 +57,8 @@ export const OrgHeaderClient: FC<IOrgHeaderClientProps> = ({ className, organiza
 	});
 
 	const handleBack = () => {
-		router.refresh();
 		router.push(`/orgs/${orgQuery.data.slug}`);
+		router.refresh();
 	};
 
 	return (
@@ -74,6 +75,14 @@ export const OrgHeaderClient: FC<IOrgHeaderClientProps> = ({ className, organiza
 							{orgQuery.data.name}
 						</button>
 						<p className="text-4xl">{spaceQuery.data.name}</p>
+					</>
+				) : isCreate ? (
+					<>
+						<button type="button" onClick={handleBack} className="flex items-center gap-x-2 text-muted-foreground">
+							<ChevronLeft className="h-4 w-4" />
+							{orgQuery.data.name}
+						</button>
+						<p className="text-4xl">New space in {orgQuery.data.name}</p>
 					</>
 				) : (
 					<p className="flex items-center gap-x-2 text-4xl">
