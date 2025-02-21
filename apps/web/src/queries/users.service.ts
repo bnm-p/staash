@@ -2,7 +2,7 @@ import { db } from "@/lib/db";
 import type { Context } from "hono";
 import { HTTPException } from "hono/http-exception";
 
-export const users = {
+export const usersService = {
 	getUser: async (c: Context) => {
 		const user = c.get("user");
 

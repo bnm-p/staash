@@ -2,59 +2,21 @@ import { Hono } from "hono";
 import { z } from "zod";
 import { zValidator } from "@hono/zod-validator";
 import { db } from "@/lib/db";
-import { orgs } from "@/queries/orgs";
+import { orgsService } from "@/queries/orgs.service";
 import { HTTPException } from "hono/http-exception";
-import SpaceSlugPage from "@/app/(dashboard)/[orgSlug]/[spaceSlug]/page";
-import { users } from "@/queries/users";
-import { spaces } from "@/queries/spaces";
+import { usersService } from "@/queries/users.service";
+import { spacesService } from "@/queries/spaces.service";
+import { Prisma } from "@prisma/client";
+import { spaceCreateSchema } from "@/validators/spaces.schema";
+import { orgSlugSchema } from "@/validators/orgs.schema";
 
 export const spaceRouter = new Hono()
-	.post(
-		"/",
-		zValidator(
-			"form",
-			z.object({
-				name: z.string(),
-				slug: z.string(),
-				orgId: z.string(),
-			}),
-		),
-		async (c) => {
-			const validated = c.req.valid("form");
-
-			const space = await db.space.create({
-				data: {
-					name: validated.name,
-					slug: validated.slug,
-					organizationId: validated.orgId,
-				},
-			});
-
-			return c.json(space);
-		},
-	)
-	.get(
-		"/",
-		zValidator(
-			"param",
-			z.object({
-				orgSlug: z.string(),
-			}),
-		),
-		async (c) => {
-			const { orgSlug } = c.req.valid("param");
-
-			const org = await orgs.getOrgBySlug(orgSlug);
-
-			const spaces = await db.space.findMany({
-				where: {
-					organizationId: org.id,
-				},
-			});
-
-			return c.json(spaces);
-		},
-	)
+	.post("/", zValidator("form", spaceCreateSchema), async (c) => {
+		return c.json(await spacesService.createSpace(c.req.valid("form")));
+	})
+	.get("/", zValidator("param", orgSlugSchema), async (c) => {
+		return c.json(await spacesService.getAllSpacesByOrgSlug(c.req.valid("param")));
+	})
 	.get(
 		"/:spaceSlug",
 		zValidator(
@@ -67,7 +29,7 @@ export const spaceRouter = new Hono()
 		async (c) => {
 			const { orgSlug, spaceSlug } = c.req.valid("param");
 
-			const org = await orgs.getOrgBySlug(orgSlug);
+			const org = await orgsService.getOrgBySlug(orgSlug);
 
 			const space = await db.space.findUnique({
 				where: {
@@ -91,11 +53,11 @@ export const spaceRouter = new Hono()
 			}),
 		),
 		async (c) => {
-			const user = await users.getUser(c);
+			const user = await usersService.getUser(c);
 			const { orgSlug, spaceSlug } = c.req.valid("param");
 
-			const org = await orgs.getOrgBySlug(orgSlug);
-			const space = await spaces.getSpaceBySpaceSlugAndOrgId(spaceSlug, org.id);
+			const org = await orgsService.getOrgBySlug(orgSlug);
+			const space = await spacesService.getSpaceBySpaceSlugAndOrgId(spaceSlug, org.id);
 
 			const member = await db.member.findFirst({
 				//TODO auf FindUnique ändern

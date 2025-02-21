@@ -6,7 +6,7 @@ import type { Space } from "@prisma/client";
 import { a } from "node_modules/better-auth/dist/auth-BBnJHOLM";
 import { client } from "@/lib/client";
 import { db } from "@/lib/db";
-import { orgs } from "@/queries/orgs";
+import { orgsService } from "@/queries/orgs.service";
 
 interface IOrgSlugPageProps {
 	params: Promise<{ orgSlug: string }>;
@@ -15,7 +15,7 @@ interface IOrgSlugPageProps {
 const OrgSlugPage: NextPage<IOrgSlugPageProps> = async ({ params }) => {
 	const { orgSlug } = await params;
 
-	const org = await orgs.getOrgBySlug(orgSlug);
+	const org = await orgsService.getOrgBySlug(orgSlug);
 
 	const spaces = await db.space.findMany({
 		where: { organizationId: org.id },
