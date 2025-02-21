@@ -5,6 +5,8 @@ import { db } from "@/lib/db";
 import { orgs } from "@/queries/orgs";
 import { HTTPException } from "hono/http-exception";
 import SpaceSlugPage from "@/app/(dashboard)/[orgSlug]/[spaceSlug]/page";
+import { users } from "@/queries/users";
+import { spaces } from "@/queries/spaces";
 
 export const spaceRouter = new Hono()
 	.post(
@@ -77,5 +79,37 @@ export const spaceRouter = new Hono()
 			});
 
 			return c.json(space);
+		},
+	)
+	.delete(
+		"/:spaceSlug",
+		zValidator(
+			"param",
+			z.object({
+				orgSlug: z.string(),
+				spaceSlug: z.string(),
+			}),
+		),
+		async (c) => {
+			const user = await users.getUser(c);
+			const { orgSlug, spaceSlug } = c.req.valid("param");
+
+			const org = await orgs.getOrgBySlug(orgSlug);
+			const space = await spaces.getSpaceBySpaceSlugAndOrgId(spaceSlug, org.id);
+
+			const member = await db.member.findFirst({
+				//TODO auf FindUnique ändern
+				where: { organizationId: org.id, userId: user.id },
+			});
+
+			if (member?.role !== "owner") {
+				throw new HTTPException(403, { message: "Forbidden: Only Owner is alowed to delete spaces" });
+			}
+
+			await db.space.delete({
+				where: { id: space.id },
+			});
+
+			return c.json({ message: "Space deleted successfully" });
 		},
 	);

@@ -104,7 +104,7 @@ model Member {
 
   @@map("member")
 }
-
+//TODO organizationId & userID unique mochen weil jo a User nd mehrfoch in ana Org sei ko
 model Invitation {
   id             String       @id
   organizationId String
