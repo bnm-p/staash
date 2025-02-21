@@ -62,7 +62,7 @@ export const CreateSpaceForm: FC<ICreateOrgFormProps> = ({ className, ...props }
 
 			toast.success("Space created");
 			router.refresh();
-			router.push(`/${activeOrganization.slug}/${data.slug}`);
+			router.push(`/orgs/${activeOrganization.slug}/spaces/${data.slug}`);
 		} catch (error) {
 			console.error("Form submission error", error);
 			toast.error("Failed to submit the form. Please try again.");
@@ -71,20 +71,19 @@ export const CreateSpaceForm: FC<ICreateOrgFormProps> = ({ className, ...props }
 
 	return (
 		<div className={cn("", className)} {...props}>
-			<div>
-				<h1 className="font-semibold text-2xl">Create Space</h1>
-				<p className="text-muted-foreground">Set up your new space in seconds</p>
-			</div>
 			<Form {...form}>
-				<form onSubmit={form.handleSubmit(onSubmit)} className={cn("w-full space-y-8 py-10", className)}>
+				<form
+					onSubmit={form.handleSubmit(onSubmit)}
+					className={cn("w-full max-w-lg divide-y divide-border border-border border-r border-b", className)}
+				>
 					<FormField
 						control={form.control}
 						name="name"
 						render={({ field }) => (
-							<FormItem>
+							<FormItem className="px-8 py-6">
 								<FormLabel>Name</FormLabel>
 								<FormControl>
-									<Input type="" className="max-w-md" placeholder="My Space" {...field} />
+									<Input type="" placeholder="My Space" {...field} />
 								</FormControl>
 								<FormDescription>Name of your space</FormDescription>
 								<FormMessage />
@@ -96,10 +95,10 @@ export const CreateSpaceForm: FC<ICreateOrgFormProps> = ({ className, ...props }
 						control={form.control}
 						name="slug"
 						render={({ field }) => (
-							<FormItem>
+							<FormItem className="px-8 py-6">
 								<FormLabel>Slug</FormLabel>
 								<FormControl className="flex items-stretch">
-									<div className="max-w-md">
+									<div>
 										<div className="flex items-center border border-border border-r-0 bg-muted px-4 py-2 text-muted-foreground text-sm">
 											staash.app/{activeOrganization?.slug}/
 										</div>
@@ -120,9 +119,11 @@ export const CreateSpaceForm: FC<ICreateOrgFormProps> = ({ className, ...props }
 						)}
 					/>
 
-					<Button type="submit" className="w-full max-w-md">
-						Create Space
-					</Button>
+					<div className="px-8 py-6">
+						<Button type="submit" className="w-full ">
+							Create Space
+						</Button>
+					</div>
 				</form>
 			</Form>
 		</div>
