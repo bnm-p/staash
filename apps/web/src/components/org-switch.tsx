@@ -3,7 +3,7 @@ import { OrgSwitchClient } from "./org-switch.client";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
-import type { Organization } from "@prisma/client";
+import type { OrganizationWithSpaces } from "@/lib/types";
 
 export interface IOrgSwitchProps extends React.ComponentProps<"button"> {}
 
@@ -13,7 +13,7 @@ export const OrgSwitch: FC<IOrgSwitchProps> = async ({ ...props }) => {
 		where: { userId: session?.user.id },
 	});
 
-	const organizations: Organization[] = [];
+	const organizations: OrganizationWithSpaces[] = [];
 
 	for (const member of usersMembers) {
 		const org = await db.organization.findUnique({

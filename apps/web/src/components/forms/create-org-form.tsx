@@ -65,7 +65,7 @@ export const CreateOrgForm: FC<ICreateOrgFormProps> = ({ className, ...props }) 
 
 	async function onSubmit(values: z.infer<typeof formSchema>) {
 		try {
-			const res = await client.api.org.$post({
+			const res = await client.api.orgs.$post({
 				form: {
 					...values,
 				},
