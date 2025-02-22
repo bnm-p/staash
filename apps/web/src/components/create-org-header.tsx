@@ -7,7 +7,7 @@ import type { FC } from "react";
 
 export interface ICreateOrgHeaderProps extends React.ComponentProps<"div"> {}
 
-export const CreateOrgHeader: FC<ICreateOrgHeaderProps> = async ({ className, ...props }) => {
+export const CreateOrgHeader: FC<ICreateOrgHeaderProps> = ({ className, ...props }) => {
 	const router = useRouter();
 
 	const handleBack = () => {
