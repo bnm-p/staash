@@ -1,8 +1,10 @@
 import { db } from "@/lib/db";
 import { HTTPException } from "hono/http-exception";
 import { orgsService } from "./orgs.service";
-import type { TSpaceCreateSchema } from "@/validators/spaces.schema";
+import type { TOrgAndSpaceSlug, TSpaceCreateSchema } from "@/validators/spaces.schema";
 import type { TOrgSlugSchema } from "@/validators/orgs.schema";
+import type { Context } from "hono";
+import { usersService } from "./users.service";
 
 export const spacesService = {
 	getSpaceBySpaceSlugAndOrgId: async (spaceSlug: string, organizationId: string) => {
@@ -51,5 +53,36 @@ export const spacesService = {
 		});
 
 		return spaces;
+	},
+
+	getSingleSpaceBySpaceSlugAndOrgSlug: async (data: TOrgAndSpaceSlug) => {
+		const org = await orgsService.getOrgBySlug(data.orgSlug);
+
+		const space = await db.space.findUnique({
+			where: {
+				slug_organizationId: {
+					slug: data.spaceSlug,
+					organizationId: org.id,
+				},
+			},
+		});
+
+		return space;
+	},
+
+	deleteSpace: async (c: Context, data: TOrgAndSpaceSlug) => {
+		const isOwner = await orgsService.isUserOwner(c, data.orgSlug);
+
+		if (!isOwner) {
+			throw new HTTPException(403, { message: "Forbidden: Only Owner is allowed to delete Organization" });
+		}
+
+		const space = await spacesService.getSpaceBySpaceSlugAndOrgId(data.spaceSlug, data.orgSlug);
+
+		await db.space.delete({
+			where: { id: space.id },
+		});
+
+		return true;
 	},
 };

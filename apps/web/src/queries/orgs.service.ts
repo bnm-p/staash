@@ -3,6 +3,7 @@ import type { TOrgCreateSchema, TOrgSlugSchema } from "@/validators/orgs.schema"
 import type { Context } from "hono";
 import { HTTPException } from "hono/http-exception";
 import { usersService } from "./users.service";
+import type { User } from "@prisma/client";
 
 export const orgsService = {
 	getOrgBySlug: async (orgSlug: string) => {
@@ -42,23 +43,29 @@ export const orgsService = {
 	},
 
 	deleteOrganization: async (c: Context, data: TOrgSlugSchema) => {
-		const user = await usersService.getUser(c);
+		const isOwner = await orgsService.isUserOwner(c, data.orgSlug);
+
+		if (!isOwner) {
+			throw new HTTPException(403, { message: "Forbidden: Only Owner is allowed to delete Organization" });
+		}
 
 		const org = await orgsService.getOrgBySlug(data.orgSlug);
-
-		const member = await db.member.findFirst({
-			//TODO auf FindUnique ändern
-			where: { organizationId: org.id, userId: user.id },
-		});
-
-		if (member?.role !== "owner") {
-			throw new HTTPException(403, { message: "Forbidden: Only Owner is alowed to delete Organization" });
-		}
 
 		await db.organization.delete({
 			where: { id: org.id },
 		});
 
 		return true;
+	},
+
+	isUserOwner: async (c: Context, orgSlug: string) => {
+		const user = await usersService.getUser(c);
+
+		const member = await db.member.findFirst({
+			where: { organization: { slug: orgSlug }, userId: user.id },
+			select: { role: true },
+		});
+
+		return member?.role === "owner";
 	},
 };
