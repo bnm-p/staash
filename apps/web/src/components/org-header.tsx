@@ -1,7 +1,7 @@
 import type { FC } from "react";
 import { OrgHeaderClient } from "./org-header.client";
 import { headers } from "next/headers";
-import { orgs } from "@/queries/orgs";
+import { orgsService } from "@/queries/orgs.service";
 
 interface IOrgHeaderProps extends React.ComponentProps<"div"> {
 	orgSlug: string;
@@ -11,7 +11,7 @@ export const OrgHeader: FC<IOrgHeaderProps> = async ({ className, orgSlug, ...pr
 	const h = await headers();
 	const pathname = h.get("x-path");
 
-	const org = await orgs.getOrgBySlug(orgSlug);
+	const org = await orgsService.getOrgBySlug(orgSlug);
 
 	if (!org) return;
 
