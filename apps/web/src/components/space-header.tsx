@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { orgs } from "@/queries/orgs";
+import { orgsService } from "@/queries/orgs.service";
 import type { FC } from "react";
 import { SpaceHeaderClient } from "./space-header.client";
 
@@ -9,7 +9,7 @@ interface ISpaceHeaderProps extends React.ComponentProps<"div"> {
 }
 
 export const SpaceHeader: FC<ISpaceHeaderProps> = async ({ className, orgSlug, spaceSlug, ...props }) => {
-	const org = await orgs.getOrgBySlug(orgSlug);
+	const org = await orgsService.getOrgBySlug(orgSlug);
 
 	if (!org) {
 		console.log("[space-header.tsx] no org");
