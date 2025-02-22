@@ -5,7 +5,23 @@ import type { NextRequest } from "next/server";
 // the following code is taken from : https://nextjs.org/docs/advanced-features/middleware#setting-headers
 export function middleware(request: NextRequest) {
 	const response = NextResponse.next();
-	response.headers.set("x-path", request.nextUrl.pathname);
+
+	const { url, nextUrl } = request;
+	const { pathname } = nextUrl;
+
+	const orgSlug = pathname.split("/")[2];
+	if (orgSlug) {
+		response.headers.set("x-org-slug", orgSlug);
+	}
+
+	const spaceSlug = pathname.split("/")[4];
+	if (spaceSlug) {
+		response.headers.set("x-space-slug", spaceSlug);
+	}
+
+	response.headers.set("x-path", pathname);
+	response.headers.set("x-url", url);
+
 	return response;
 }
 

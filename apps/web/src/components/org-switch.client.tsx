@@ -11,7 +11,6 @@ import { useParams, usePathname, useRouter } from "next/navigation";
 import { type FC, useCallback, useEffect, useRef, useState } from "react";
 import type { IOrgSwitchProps } from "./org-switch";
 import type { OrganizationWithSpaces } from "@/lib/types";
-import { useTransitionRouter } from "next-view-transitions";
 
 interface IOrgSwitchClientProps extends IOrgSwitchProps {
 	organizations: OrganizationWithSpaces[];

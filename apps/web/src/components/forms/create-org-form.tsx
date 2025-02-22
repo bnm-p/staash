@@ -1,36 +1,37 @@
 "use client";
 
-import Image from "next/image";
-import { useEffect, useState, type FC } from "react";
+import { ImageUpload } from "@/components/ui/image-upload";
+import { authClient } from "@/lib/auth-client";
+import { client } from "@/lib/client";
+import { useUploadThing } from "@/lib/uploadthing";
+import { slugify } from "@/lib/utils";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useDropzone } from "@uploadthing/react";
+import { Button } from "@workspace/ui/components/button";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@workspace/ui/components/form";
 import { Input } from "@workspace/ui/components/input";
 import { cn } from "@workspace/ui/lib/utils";
-import { toast } from "sonner";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import { Building2, Sparkle, Users } from "lucide-react";
-import { Button } from "@workspace/ui/components/button";
-import { authClient } from "@/lib/auth-client";
-import { slugify } from "@/lib/utils";
+import { Loader2, Sparkle, Users } from "lucide-react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { client } from "@/lib/client";
+import { type FC, useCallback, useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { generateClientDropzoneAccept, generatePermittedFileTypes } from "uploadthing/client";
+import * as z from "zod";
 
 interface ICreateOrgFormProps extends React.ComponentProps<"form"> {}
 
 const formSchema = z.object({
-	name: z.string(),
-	slug: z.string(),
-	logo: z.string(),
+	name: z.string().min(1, "Name is required"),
+	slug: z.string().min(1, "Slug is required"),
+	logo: z.string().optional(),
 });
-
-const COLORS = ["#f43f5e", "#34d399", "#a3e635", "#38bdf8", "#6366f1", "#a855f7"];
-const randomColor = COLORS[Math.floor(Math.random() * COLORS.length)];
 
 export const CreateOrgForm: FC<ICreateOrgFormProps> = ({ className, ...props }) => {
 	const router = useRouter();
-
-	const [logoPreview, setLogoPreview] = useState<string | null>(null);
+	const [isSubmitting, setIsSubmitting] = useState(false);
+	const [pendingLogo, setPendingLogo] = useState<File | null>(null);
 	const [autoSlug, setAutoSlug] = useState(true);
 
 	const form = useForm<z.infer<typeof formSchema>>({
@@ -42,19 +43,29 @@ export const CreateOrgForm: FC<ICreateOrgFormProps> = ({ className, ...props }) 
 		},
 	});
 
-	const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const file = e.target.files?.[0];
-		if (file) {
-			const reader = new FileReader();
-			reader.onloadend = () => {
-				setLogoPreview(reader.result as string);
-			};
-			reader.readAsDataURL(file);
-		}
-	};
+	const { startUpload, routeConfig } = useUploadThing("imageUploader", {
+		onUploadError: () => {
+			toast.error("Failed to upload logo");
+			setIsSubmitting(false);
+		},
+	});
 
-	const watchName = form.watch("name", "");
-	const watchSlug = form.watch("slug", "");
+	const handleLogoChange = useCallback((file: File) => {
+		setPendingLogo(file);
+	}, []);
+
+	const { getRootProps, getInputProps } = useDropzone({
+		onDrop: (acceptedFiles) => {
+			if (acceptedFiles[0]) {
+				handleLogoChange(acceptedFiles[0]);
+			}
+		},
+		accept: generateClientDropzoneAccept(generatePermittedFileTypes(routeConfig).fileTypes),
+		maxFiles: 1,
+	});
+
+	const watchName = form.watch("name");
+	const watchSlug = form.watch("slug");
 
 	useEffect(() => {
 		if (autoSlug && watchName) {
@@ -62,14 +73,31 @@ export const CreateOrgForm: FC<ICreateOrgFormProps> = ({ className, ...props }) 
 		}
 	}, [watchName, autoSlug, form]);
 
-	async function onSubmit(values: z.infer<typeof formSchema>) {
+	const onSubmit = async (values: z.infer<typeof formSchema>) => {
 		try {
+			setIsSubmitting(true);
+
+			// Upload logo if present
+			let logoUrl = "";
+			if (pendingLogo) {
+				const uploadResult = await startUpload([pendingLogo]);
+				if (!uploadResult?.[0]?.url) {
+					throw new Error("Logo upload failed");
+				}
+				logoUrl = uploadResult[0].url;
+			}
+
+			// Create organization
 			const res = await client.api.orgs.$post({
 				form: {
 					...values,
+					logo: logoUrl,
 				},
 			});
+
 			const data = await res.json();
+
+			// Set active organization
 			await authClient.organization.setActive({
 				organizationSlug: values.slug,
 			});
@@ -79,9 +107,11 @@ export const CreateOrgForm: FC<ICreateOrgFormProps> = ({ className, ...props }) 
 			router.push(`/orgs/${data.slug}`);
 		} catch (error) {
 			console.error("Form submission error", error);
-			toast.error("Failed to submit the form. Please try again.");
+			toast.error("Failed to create organization");
+		} finally {
+			setIsSubmitting(false);
 		}
-	}
+	};
 
 	return (
 		<div className="grid w-full grid-cols-1 md:grid-cols-[1fr_1.5fr]">
@@ -98,7 +128,7 @@ export const CreateOrgForm: FC<ICreateOrgFormProps> = ({ className, ...props }) 
 							<FormItem className="px-8 py-6">
 								<FormLabel>Name</FormLabel>
 								<FormControl>
-									<Input type="" placeholder="My Organization" {...field} />
+									<Input placeholder="My Organization" {...field} />
 								</FormControl>
 								<FormDescription>Name of your organization</FormDescription>
 								<FormMessage />
@@ -112,13 +142,12 @@ export const CreateOrgForm: FC<ICreateOrgFormProps> = ({ className, ...props }) 
 						render={({ field }) => (
 							<FormItem className="px-8 py-6">
 								<FormLabel>Slug</FormLabel>
-								<FormControl className="flex items-stretch">
-									<div>
+								<FormControl>
+									<div className="flex items-stretch">
 										<div className="flex items-center border border-border border-r-0 bg-muted px-4 py-2 text-muted-foreground text-sm">
 											staash.app/
 										</div>
 										<Input
-											type=""
 											placeholder="my-organization"
 											{...field}
 											onChange={(e) => {
@@ -134,24 +163,21 @@ export const CreateOrgForm: FC<ICreateOrgFormProps> = ({ className, ...props }) 
 						)}
 					/>
 
-					<FormField
-						control={form.control}
-						name="logo"
-						render={({ field }) => (
-							<FormItem className="px-8 py-6">
-								<FormLabel>Logo</FormLabel>
-								<FormControl>
-									<Input type="file" accept="image/*" {...field} onChange={handleLogoChange} />
-								</FormControl>
-								<FormDescription>Upload a logo for your organization</FormDescription>
-								<FormMessage />
-							</FormItem>
-						)}
-					/>
+					<div className="px-8 py-6">
+						<FormLabel>Logo</FormLabel>
+						<ImageUpload onChange={setPendingLogo} className="mt-2" placeholder="Click or drag and drop to upload logo" />
+					</div>
 
 					<div className="px-8 py-6">
-						<Button type="submit" className="w-full">
-							Create Organization
+						<Button type="submit" className="w-full" disabled={isSubmitting}>
+							{isSubmitting ? (
+								<>
+									<Loader2 className="mr-2 h-4 w-4 animate-spin" />
+									Creating...
+								</>
+							) : (
+								"Create Organization"
+							)}
 						</Button>
 					</div>
 				</form>
@@ -160,16 +186,17 @@ export const CreateOrgForm: FC<ICreateOrgFormProps> = ({ className, ...props }) 
 				<div className="w-full max-w-md border border-border bg-background p-4">
 					<div className="flex items-start gap-4">
 						<div className="relative h-12 w-12 overflow-hidden border border-border">
-							{logoPreview ? (
-								<Image src={logoPreview || "/placeholder.svg"} alt="Organization logo" layout="fill" objectFit="cover" />
+							{pendingLogo ? (
+								<Image
+									alt="Logo preview"
+									src={URL.createObjectURL(pendingLogo)}
+									height={48}
+									width={48}
+									className="h-full w-full object-cover"
+								/>
 							) : (
-								<div
-									className="flex h-full w-full items-center justify-center"
-									style={{
-										backgroundColor: `${randomColor}50`,
-									}}
-								>
-									<Sparkle className="h-6 w-6 text-muted-foreground" style={{ color: randomColor }} />
+								<div className="flex h-full w-full items-center justify-center">
+									<Sparkle className="h-6 w-6 text-muted-foreground" />
 								</div>
 							)}
 						</div>
