@@ -2,7 +2,7 @@ import { OrgHeader } from "@/components/org-header";
 import { SideNavLink } from "@/components/sidenav-link";
 import { SpaceCard } from "@/components/space-card";
 import { db } from "@/lib/db";
-import { orgs } from "@/queries/orgs";
+import { orgsService } from "@/queries/orgs.service";
 import type { Space } from "@prisma/client";
 import { Plus } from "lucide-react";
 import type { NextPage } from "next";
@@ -14,7 +14,7 @@ interface IOrgSlugPageProps {
 const OrgSlugPage: NextPage<IOrgSlugPageProps> = async ({ params }) => {
 	const { orgSlug } = await params;
 
-	const org = await orgs.getOrgBySlug(orgSlug);
+	const org = await orgsService.getOrgBySlug(orgSlug);
 
 	const spaces = await db.space.findMany({
 		where: { organizationId: org.id },

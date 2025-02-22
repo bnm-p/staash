@@ -116,6 +116,7 @@ model Invitation {
   inviterId      String
   user           User         @relation(fields: [inviterId], references: [id], onDelete: Cascade)
 
+  
   @@map("invitation")
 }
 
