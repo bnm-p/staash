@@ -14,11 +14,11 @@ export const SubNav: FC = () => {
 	return (
 		<div className="flex flex-grow">
 			<div className="flex w-full text-sm">
-				{categories.map((category) => (
+				{categories.map((category, index) => (
 					<a
 						key={category.name}
 						href={category.path}
-						className="flex flex-grow items-center justify-center border-border border-r border-b px-8 hover:bg-muted"
+						className={`flex flex-grow items-center justify-center border-border border-b px-8 hover:bg-muted ${index !== categories.length - 1 ? "border-r" : ""}`}
 					>
 						<p>{category.name}</p>
 					</a>
