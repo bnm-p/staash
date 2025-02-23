@@ -2,7 +2,16 @@
 const nextConfig = {
 	transpilePackages: ["@workspace/ui"],
 	images: {
-		domains: ["avatars.githubusercontent.com"],
+		remotePatterns: [
+			{
+				protocol: "https",
+				hostname: "avatars.githubusercontent.com",
+			},
+			{
+				protocol: "https",
+				hostname: "utfs.io",
+			},
+		],
 	},
 };
 
