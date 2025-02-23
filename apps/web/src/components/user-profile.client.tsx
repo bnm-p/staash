@@ -41,7 +41,7 @@ export const UserProfileClient: FC<IUserProfileClientProps> = ({ className, user
 				</button>
 			</DropdownMenuTrigger>
 			<DropdownMenuContent className="w-[calc(14rem+1px)] p-0" align="end" sideOffset={0} alignOffset={-1}>
-				<DropdownMenuItem>
+				<DropdownMenuItem onClick={() => router.push("/account")}>
 					<UserIcon />
 					<span>Profile</span>
 					<DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
