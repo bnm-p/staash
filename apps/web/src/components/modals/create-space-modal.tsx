@@ -1,17 +1,9 @@
 "use client";
 
 import { useModal } from "@/hooks/use-modal";
-import { authClient } from "@/lib/auth-client";
 import { slugify } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-	Dialog,
-	DialogContent,
-	DialogTitle,
-	DialogFooter,
-	DialogHeader,
-	DialogDescription,
-} from "@workspace/ui/components/dialog";
+import { Dialog, DialogContent, DialogTitle, DialogHeader, DialogDescription } from "@workspace/ui/components/dialog";
 import { useRouter } from "next/navigation";
 import { Button } from "@workspace/ui/components/button";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@workspace/ui/components/form";
@@ -37,7 +29,6 @@ export const CreateSpaceModal: FC<ICreateSpaceModalProps> = ({ className }) => {
 
 	const router = useRouter();
 	const [autoSlug, setAutoSlug] = useState(true);
-	const { data: activeOrganization } = authClient.useActiveOrganization();
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -57,7 +48,7 @@ export const CreateSpaceModal: FC<ICreateSpaceModalProps> = ({ className }) => {
 
 	async function onSubmit(values: z.infer<typeof formSchema>) {
 		try {
-			if (!modalData?.org?.id || !modalData?.org?.slug || !activeOrganization) {
+			if (!modalData?.org?.id || !modalData?.org?.slug) {
 				throw new Error("No active organization");
 			}
 

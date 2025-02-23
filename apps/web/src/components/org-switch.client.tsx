@@ -7,7 +7,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@workspace/ui/component
 import { cn } from "@workspace/ui/lib/utils";
 import { Check, ChevronsUpDown, Plus } from "lucide-react";
 import { useParams, usePathname, useRouter } from "next/navigation";
-import { type FC, useCallback, useEffect, useRef, useState } from "react";
+import { type FC, memo, useCallback, useEffect, useRef, useState } from "react";
 import type { IOrgSwitchProps } from "./org-switch";
 import type { OrganizationWithSpaces } from "@/lib/types";
 import { useModal } from "@/hooks/use-modal";
@@ -17,7 +17,7 @@ interface IOrgSwitchClientProps extends IOrgSwitchProps {
 	organizations: OrganizationWithSpaces[];
 }
 
-export const OrgSwitchClient: FC<IOrgSwitchClientProps> = ({ className, organizations, ...props }) => {
+export const OrgSwitchClient: FC<IOrgSwitchClientProps> = memo(({ className, organizations, ...props }) => {
 	const [open, setOpen] = useState<boolean>(false);
 	const router = useRouter();
 	const pathname = usePathname();
@@ -63,9 +63,9 @@ export const OrgSwitchClient: FC<IOrgSwitchClientProps> = ({ className, organiza
 		async (org: Organization) => {
 			if (!org.slug) return;
 
-			setActiveOrg({
-				orgSlug: org.slug,
-			});
+			if (activeOrg?.id === org.id) return;
+
+			setActiveOrg({ orgSlug: org.slug });
 
 			setSelectedSpace(null);
 			setOpen(false);
@@ -83,6 +83,8 @@ export const OrgSwitchClient: FC<IOrgSwitchClientProps> = ({ className, organiza
 	useEffect(() => {
 		const { orgSlug } = params;
 		if (orgSlug && orgSlug !== "create") {
+			if (!activeOrg) return;
+
 			setSelectedSpace(null);
 			const org = organizations.find((org) => org.slug === orgSlug);
 			if (!org) {
@@ -90,9 +92,11 @@ export const OrgSwitchClient: FC<IOrgSwitchClientProps> = ({ className, organiza
 				return;
 			}
 
-			setActiveOrg({ orgId: org.id });
+			if (activeOrg.id !== org.id) {
+				setActiveOrg({ orgId: org.id });
+			}
 		}
-	}, [organizations, router, params, setActiveOrg]);
+	}, [organizations, router, params, setActiveOrg, activeOrg]);
 
 	useEffect(() => {
 		const segments = pathname.split("/").filter(Boolean);
@@ -249,4 +253,4 @@ export const OrgSwitchClient: FC<IOrgSwitchClientProps> = ({ className, organiza
 			</PopoverContent>
 		</Popover>
 	);
-};
+});

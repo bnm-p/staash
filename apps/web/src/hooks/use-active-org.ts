@@ -37,6 +37,7 @@ export const useActiveOrg = () => {
 			}));
 		},
 		enabled: !!session, // Only fetch if user is authenticated
+		refetchOnMount: false, // Don't refetch on mount
 	});
 
 	// Fetch active organization
@@ -59,6 +60,7 @@ export const useActiveOrg = () => {
 		},
 		enabled: !!session,
 		staleTime: 1000 * 60 * 5, // Consider data fresh for 5 minutes
+		refetchOnMount: false, // Don't refetch on mount
 	});
 
 	// Mutation to set active organization
@@ -68,6 +70,8 @@ export const useActiveOrg = () => {
 		error: setActiveOrgError,
 	} = useMutation({
 		mutationFn: async ({ orgId, orgSlug }: SetActiveOrgParams) => {
+			console.log("setActiveOrg", orgId, orgSlug);
+
 			const response = await client.api.users.activeOrg.$put({
 				json: { orgId, orgSlug },
 			});
