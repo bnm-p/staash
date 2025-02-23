@@ -14,6 +14,21 @@ export const usersService = {
 
 		return user;
 	},
+
+	getUserById: async (userId: string) => {
+		const user = db.user.findUnique({
+			where: {
+				id: userId,
+			},
+		});
+
+		if (!user) {
+			throw new HTTPException(401, { message: "Unauthorized" });
+		}
+
+		return user;
+	},
+
 	getAllOrgsForCurrentUser: async (userId: string) => {
 		const members = await db.member.findMany({
 			where: {
