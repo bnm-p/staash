@@ -65,7 +65,7 @@ export const OrgSwitchClient: FC<IOrgSwitchClientProps> = ({ className, organiza
 			setSelectedSpace(null);
 			setOpen(false);
 			router.refresh();
-			router.push(`/orgs/${org.slug}`);
+			router.push(`/${org.slug}`);
 		},
 		[router],
 	);
@@ -84,14 +84,14 @@ export const OrgSwitchClient: FC<IOrgSwitchClientProps> = ({ className, organiza
 			authClient.organization.setActive({ organizationId: org.id });
 
 			if (segments.length === 1) {
-				router.push(`/orgs/${org.slug}`);
+				router.push(`/${org.slug}`);
 			}
 		}
 	}, [pathname, organizations, router, params]);
 
 	useEffect(() => {
 		const segments = pathname.split("/").filter(Boolean);
-		if (segments.length >= 3) {
+		if (segments.length >= 2) {
 			const { orgSlug, spaceSlug } = params;
 
 			if (orgSlug && spaceSlug && orgSlug !== "create" && spaceSlug !== "create") {
@@ -109,7 +109,7 @@ export const OrgSwitchClient: FC<IOrgSwitchClientProps> = ({ className, organiza
 				if (foundSpace) {
 					setSelectedSpace(foundSpace);
 				} else {
-					router.push(`/orgs/${org.slug}`);
+					router.push(`/${org.slug}`);
 				}
 			} else {
 				setSelectedSpace(null);
@@ -122,7 +122,7 @@ export const OrgSwitchClient: FC<IOrgSwitchClientProps> = ({ className, organiza
 			const selectedSpace = spaces.find((space) => space.slug === slug) || null;
 			setSelectedSpace(selectedSpace);
 			router.refresh();
-			router.push(`/orgs/${hoveredOrg?.slug}/spaces/${slug}`);
+			router.push(`/${hoveredOrg?.slug}/${slug}`);
 		},
 		[router, hoveredOrg, spaces],
 	);
@@ -135,7 +135,7 @@ export const OrgSwitchClient: FC<IOrgSwitchClientProps> = ({ className, organiza
 
 	const handleCreateSpace = () => {
 		setOpen(false);
-		router.push(`/orgs/${hoveredOrg?.slug}/create`);
+		router.push(`/${hoveredOrg?.slug}/create`);
 		router.refresh();
 	};
 
@@ -146,15 +146,15 @@ export const OrgSwitchClient: FC<IOrgSwitchClientProps> = ({ className, organiza
 					type="button"
 					aria-expanded={open}
 					aria-label="Select organization and space"
-					className="flex h-full w-[256px] items-center justify-between px-8 hover:bg-muted"
+					className="flex items-center gap-4"
 					{...props}
 				>
 					<div className="flex items-center gap-2">
-						<Avatar className="size-8">
+						<Avatar className="size-6">
 							<AvatarImage src={activeOrganization?.logo || ""} alt={activeOrganization?.name} />
-							<AvatarFallback>{activeOrganization?.name[0]}</AvatarFallback>
+							<AvatarFallback className="text-xs">{activeOrganization?.name[0]}</AvatarFallback>
 						</Avatar>
-						<span className="max-w-[130px] truncate text-sm">
+						<span className="text-sm">
 							{activeOrganization?.name}
 							{selectedSpace ? ` / ${selectedSpace.name}` : ""}
 						</span>
@@ -177,9 +177,9 @@ export const OrgSwitchClient: FC<IOrgSwitchClientProps> = ({ className, organiza
 											onSelect={() => handleOrgChange(org)}
 											className="flex items-center gap-2 px-4 py-2 data-[selected=true]:bg-muted"
 										>
-											<Avatar className="h-8 w-8">
+											<Avatar className="size-6">
 												<AvatarImage src={org.logo || ""} alt={org.name} />
-												<AvatarFallback>{org.name[0]}</AvatarFallback>
+												<AvatarFallback className="text-xs">{org.name[0]}</AvatarFallback>
 											</Avatar>
 											<span>{org.name}</span>
 											<Check className={cn("ml-auto h-4 w-4", activeOrganization?.id === org.id ? "opacity-100" : "opacity-0")} />
@@ -212,12 +212,12 @@ export const OrgSwitchClient: FC<IOrgSwitchClientProps> = ({ className, organiza
 											}}
 											className="flex items-center gap-2 px-4 py-2 data-[selected=true]:bg-muted"
 										>
-											<Avatar className="h-6 w-6">
+											<Avatar className="size-6">
 												{/* <AvatarImage
 													src={space?.image || ""}
 													alt={space.name}
 												/> */}
-												<AvatarFallback>{space.name[0]}</AvatarFallback>
+												<AvatarFallback className="text-xs">{space.name[0]}</AvatarFallback>
 											</Avatar>
 											<span>{space.name}</span>
 											<Check className={cn("ml-auto h-4 w-4", selectedSpace?.id === space.id ? "opacity-100" : "opacity-0")} />

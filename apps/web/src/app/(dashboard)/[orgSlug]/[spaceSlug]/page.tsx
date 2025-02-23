@@ -1,4 +1,3 @@
-import { SpaceHeader } from "@/components/space-header";
 import type { NextPage } from "next";
 
 interface ISpaceSlugPageProps {
@@ -9,10 +8,9 @@ const SpaceSlugPage: NextPage<ISpaceSlugPageProps> = async ({ params }) => {
 	const { orgSlug, spaceSlug } = await params;
 
 	return (
-		<>
-			<SpaceHeader orgSlug={orgSlug} spaceSlug={spaceSlug} />
-			space page
-		</>
+		<div className="justify-center">
+			space page: {orgSlug} {spaceSlug}
+		</div>
 	);
 };
 

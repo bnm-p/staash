@@ -31,19 +31,13 @@ export const UserProfileClient: FC<IUserProfileClientProps> = ({ className, user
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
-				<button
-					type="button"
-					className={cn("flex h-full w-56 items-center gap-2 border-border border-l px-8 hover:bg-muted", className)}
-					{...props}
-				>
+				<button type="button" className={cn("flex items-center gap-2", className)} {...props}>
 					<div className="flex items-center gap-2">
 						<Avatar className="size-8">
 							<AvatarImage src={user?.image || ""} alt={user?.name} />
 							<AvatarFallback>{user?.name[0]}</AvatarFallback>
 						</Avatar>
-						<span className="text-sm">{user?.name}</span>
 					</div>
-					<EllipsisVertical className="ml-auto h-4 w-4 shrink-0 opacity-50" />
 				</button>
 			</DropdownMenuTrigger>
 			<DropdownMenuContent className="w-[calc(14rem+1px)] p-0" align="end" sideOffset={0} alignOffset={-1}>

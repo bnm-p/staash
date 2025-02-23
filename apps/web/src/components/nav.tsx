@@ -5,16 +5,13 @@ import { UserProfile } from "./user-profile";
 
 export const Nav: FC = () => {
 	return (
-		<div className="flex flex-grow items-center justify-between">
-			<div className="flex h-full items-stretch">
-				<div className="flex items-center border-border border-r px-8">
-					<Logo />
-				</div>
-				<div className="flex items-center border-border border-r">
-					<OrgSwitch />
-				</div>
+		<div className="flex h-16 items-center justify-between px-8">
+			<div className="flex h-full items-center gap-x-8">
+				<Logo />
+				<span className="h-6 w-px rotate-12 bg-border" />
+				<OrgSwitch />
 			</div>
-			<div className="flex h-full items-stretch">
+			<div className="flex h-full items-center gap-x-8">
 				<UserProfile />
 			</div>
 		</div>
