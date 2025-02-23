@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { orgsService } from "@/queries/orgs.service";
+import { usersService } from "@/queries/users.service";
 import type { Organization } from "@prisma/client";
 import type { NextPage } from "next";
 import { headers } from "next/headers";
@@ -14,7 +15,8 @@ const IndexPage: NextPage = async () => {
 		return;
 	}
 
-	const organizations = await orgsService.getAllOrgsForCurrentUser(session?.user.id);
+	const organizations = await usersService.getAllOrgsForCurrentUser(session?.user.id);
+
 
 	if (organizations?.length === 0) {
 		return redirect("/create");

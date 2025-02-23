@@ -6,33 +6,24 @@ import { usersService } from "./users.service";
 import type { User } from "better-auth";
 
 export const orgsService = {
-	getAllOrgsForCurrentUser: async (userId: string) => {
-		const members = await db.member.findMany({
-			where: {
-				userId: userId,
-			},
-			include: {
-				organization: {
-					include: {
-						spaces: true,
-					},
-				},
-			},
-		});
-
-		const orgs = members.map((member) => {
-			return member.organization;
-		});
-
-		console.log(orgs, "hier!");
-
-		return orgs;
-	},
-
 	getOrgBySlug: async (orgSlug: string) => {
 		const org = await db.organization.findUnique({
 			where: {
 				slug: orgSlug,
+			},
+		});
+
+		if (!org) {
+			throw new HTTPException(400, { message: "No organization with this slug" });
+		}
+
+		return org;
+	},
+
+	getOrgById: async (orgId: string) => {
+		const org = await db.organization.findUnique({
+			where: {
+				id: orgId,
 			},
 		});
 
