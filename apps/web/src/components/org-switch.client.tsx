@@ -11,6 +11,7 @@ import { useParams, usePathname, useRouter } from "next/navigation";
 import { type FC, useCallback, useEffect, useRef, useState } from "react";
 import type { IOrgSwitchProps } from "./org-switch";
 import type { OrganizationWithSpaces } from "@/lib/types";
+import { useModal } from "@/hooks/use-modal";
 
 interface IOrgSwitchClientProps extends IOrgSwitchProps {
 	organizations: OrganizationWithSpaces[];
@@ -20,6 +21,7 @@ export const OrgSwitchClient: FC<IOrgSwitchClientProps> = ({ className, organiza
 	const [open, setOpen] = useState<boolean>(false);
 	const router = useRouter();
 	const pathname = usePathname();
+	const modal = useModal();
 	const params = useParams<{ orgSlug?: string; spaceSlug?: string }>();
 	const { data: activeOrganization } = authClient.useActiveOrganization();
 	const [hoveredOrg, setHoveredOrg] = useState<Partial<Organization> | null>(activeOrganization);
@@ -136,8 +138,12 @@ export const OrgSwitchClient: FC<IOrgSwitchClientProps> = ({ className, organiza
 
 	const handleCreateSpace = () => {
 		setOpen(false);
-		router.push(`/${hoveredOrg?.slug}/create`);
-		router.refresh();
+		modal.onOpen("create-space", {
+			org: {
+				slug: hoveredOrg?.slug,
+				id: hoveredOrg?.id,
+			},
+		});
 	};
 
 	return (
