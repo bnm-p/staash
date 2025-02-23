@@ -6,6 +6,16 @@ import { admin, organization } from "better-auth/plugins";
 export const auth = betterAuth({
 	database: prismaAdapter(db, { provider: "postgresql" }),
 	plugins: [organization()],
+	user: {
+		additionalFields: {
+			lastActiveOrgId: {
+				type: "string",
+				required: false,
+				defaultValue: null,
+				input: true,
+			},
+		},
+	},
 	emailAndPassword: {
 		enabled: true,
 		async sendResetPassword(data, request) {

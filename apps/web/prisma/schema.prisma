@@ -15,8 +15,8 @@ datasource db {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  email         String    @unique
+  id            String       @id @default(cuid())
+  email         String       @unique
   name          String?
   emailVerified Boolean
   image         String?
@@ -24,9 +24,10 @@ model User {
   updatedAt     DateTime
   sessions      Session[]
   accounts      Account[]
+  members       Member[]
+  invitations   Invitation[]
 
-  members     Member[]
-  invitations Invitation[]
+  lastActiveOrgId String?
 
   @@map("user")
 }
@@ -81,7 +82,7 @@ model Verification {
 model Organization {
   id          String       @id @default(cuid())
   name        String
-  slug        String    
+  slug        String
   logo        String?
   createdAt   DateTime     @default(now())
   metadata    String?
@@ -100,11 +101,12 @@ model Member {
   userId         String
   user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   role           String
-  createdAt      DateTime @default(now())
+  createdAt      DateTime     @default(now())
 
+  @@unique([organizationId, userId])
   @@map("member")
 }
-//TODO organizationId & userID unique mochen weil jo a User nd mehrfoch in ana Org sei ko
+
 model Invitation {
   id             String       @id
   organizationId String
@@ -116,7 +118,6 @@ model Invitation {
   inviterId      String
   user           User         @relation(fields: [inviterId], references: [id], onDelete: Cascade)
 
-  
   @@map("invitation")
 }
 
@@ -126,26 +127,26 @@ model Space {
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   name           String
   slug           String
-  createdAt      DateTime @default(now())
+  createdAt      DateTime     @default(now())
   stages         Stage[]
 
-  @@unique([slug,organizationId])
+  @@unique([slug, organizationId])
   @@map("space")
 }
 
 model Stage {
-  id        String       @id @default(cuid())
+  id        String     @id @default(cuid())
   name      String
   spaceId   String
-  space     Space @relation(fields: [spaceId], references: [id], onDelete: Cascade)
-  createdAt DateTime @default(now())
+  space     Space      @relation(fields: [spaceId], references: [id], onDelete: Cascade)
+  createdAt DateTime   @default(now())
   variables Variable[]
-  
+
   @@map("stage")
 }
 
 model Variable {
-  id        String  @id @default(cuid())
+  id        String   @id @default(cuid())
   name      String
   type      String
   value     String
