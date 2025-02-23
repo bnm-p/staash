@@ -1,32 +1,16 @@
 "use client";
+
+import { authClient } from "@/lib/auth-client";
 import { Avatar, AvatarFallback, AvatarImage } from "@workspace/ui/components/avatar";
 import { Button } from "@workspace/ui/components/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader } from "@workspace/ui/components/card";
 import type { NextPage } from "next";
-import Link from "next/link";
-import { authClient } from "@/lib/auth-client";
-
-const links = [
-	{ href: "/account/general", label: "General" },
-	{ href: "/account/connections", label: "Connections" },
-	{ href: "/account/tokens", label: "Tokens" },
-	{ href: "/account/notifications", label: "Notifications" },
-];
 
 const AccountPage: NextPage = () => {
 	const { data: session } = authClient.useSession();
 
 	return (
-		<div className="flex pt-20">
-			<div className="w-60">
-				{links.map((link) => (
-					<div key={link.href} className="rounded-sm py-2 pl-3 hover:bg-muted">
-						<Link href={link.href}>
-							<div className="text-sm">{link.label}</div>
-						</Link>
-					</div>
-				))}
-			</div>
+		<div className="flex">
 			<div className="space-between w-full">
 				<div className="w-full pl-3">
 					<div className="space-y-3 pb-10">
@@ -46,7 +30,7 @@ const AccountPage: NextPage = () => {
 								</CardDescription>
 							</div>
 							<CardContent className="p-0">
-								<Avatar className="size-12">
+								<Avatar className="size-20">
 									<AvatarImage src={session?.user?.image || ""} alt={session?.user?.name} />
 									<AvatarFallback>{session?.user?.name[0]}</AvatarFallback>
 								</Avatar>
