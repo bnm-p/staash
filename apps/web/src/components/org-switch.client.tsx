@@ -23,6 +23,7 @@ export const OrgSwitchClient: FC<IOrgSwitchClientProps> = ({ className, organiza
 	const params = useParams<{ orgSlug?: string; spaceSlug?: string }>();
 	const { data: activeOrganization } = authClient.useActiveOrganization();
 	const [hoveredOrg, setHoveredOrg] = useState<Partial<Organization> | null>(activeOrganization);
+	const [activeOrganizationName, setActiveOrganizationName] = useState<string>(activeOrganization?.name || "");
 	const [spaces, setSpaces] = useState<Space[]>([]);
 	const [selectedSpace, setSelectedSpace] = useState<Space | null>(null);
 
@@ -58,7 +59,7 @@ export const OrgSwitchClient: FC<IOrgSwitchClientProps> = ({ className, organiza
 		async (org: Organization) => {
 			if (!org.slug) return;
 
-			void authClient.organization.setActive({
+			authClient.organization.setActive({
 				organizationSlug: org.slug,
 			});
 
@@ -71,7 +72,11 @@ export const OrgSwitchClient: FC<IOrgSwitchClientProps> = ({ className, organiza
 	);
 
 	useEffect(() => {
-		const segments = pathname.split("/").filter(Boolean);
+		if (!activeOrganization) return;
+		setActiveOrganizationName(activeOrganization.name);
+	}, [activeOrganization]);
+
+	useEffect(() => {
 		const { orgSlug } = params;
 		if (orgSlug && orgSlug !== "create") {
 			setSelectedSpace(null);
@@ -82,12 +87,8 @@ export const OrgSwitchClient: FC<IOrgSwitchClientProps> = ({ className, organiza
 			}
 
 			authClient.organization.setActive({ organizationId: org.id });
-
-			if (segments.length === 1) {
-				router.push(`/${org.slug}`);
-			}
 		}
-	}, [pathname, organizations, router, params]);
+	}, [organizations, router, params]);
 
 	useEffect(() => {
 		const segments = pathname.split("/").filter(Boolean);
@@ -155,7 +156,7 @@ export const OrgSwitchClient: FC<IOrgSwitchClientProps> = ({ className, organiza
 							<AvatarFallback className="text-xs">{activeOrganization?.name[0]}</AvatarFallback>
 						</Avatar>
 						<span className="text-sm">
-							{activeOrganization?.name}
+							{activeOrganizationName}
 							{selectedSpace ? ` / ${selectedSpace.name}` : ""}
 						</span>
 					</div>
