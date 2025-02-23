@@ -1,6 +1,8 @@
+import { orgSlugSchema } from "@/validators/orgs.schema";
 import { db } from "@/lib/db";
 import type { Context } from "hono";
 import { HTTPException } from "hono/http-exception";
+import { orgsService } from "./orgs.service";
 
 export const usersService = {
 	getUser: async (c: Context) => {
@@ -11,5 +13,65 @@ export const usersService = {
 		}
 
 		return user;
+	},
+	getAllOrgsForCurrentUser: async (userId: string) => {
+		const members = await db.member.findMany({
+			where: {
+				userId: userId,
+			},
+			include: {
+				organization: {
+					include: {
+						spaces: true,
+					},
+				},
+			},
+		});
+
+		const orgs = members.map((member) => {
+			return member.organization;
+		});
+
+		return orgs;
+	},
+	getActiveOrg: async (userId: string) => {
+		const user = await db.user.findUnique({
+			where: {
+				id: userId,
+			},
+			select: {
+				lastActiveOrgId: true,
+			},
+		});
+
+		if (!user?.lastActiveOrgId) {
+			return null;
+		}
+
+		return await orgsService.getOrgById(user.lastActiveOrgId);
+	},
+
+	setActiveOrg: async (userId: string, { orgId, orgSlug }: { orgId?: string; orgSlug?: string }) => {
+		if (!orgId && !orgSlug) {
+			throw new Error("Requires either orgId or orgSlug.");
+		}
+
+		if (orgSlug) {
+			const org = await orgsService.getOrgBySlug(orgSlug);
+			orgId = org.id;
+		} else if (orgId) {
+			await orgsService.getOrgById(orgId);
+		}
+
+		const org = await db.user.update({
+			where: {
+				id: userId,
+			},
+			data: {
+				lastActiveOrgId: orgId,
+			},
+		});
+
+		return org;
 	},
 };
