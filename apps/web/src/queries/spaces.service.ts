@@ -41,8 +41,8 @@ export const spacesService = {
 		return space;
 	},
 
-	getAllSpacesByOrgSlug: async (data: TOrgSlugSchema) => {
-		const org = await orgsService.getOrgBySlug(data.orgSlug);
+	getAllSpacesByOrgSlug: async ({ orgSlug }: TOrgSlugSchema) => {
+		const org = await orgsService.getOrgBySlug(orgSlug);
 
 		const spaces = await db.space.findMany({
 			where: {
@@ -53,13 +53,13 @@ export const spacesService = {
 		return spaces;
 	},
 
-	getSingleSpaceBySpaceSlugAndOrgSlug: async (data: TOrgAndSpaceSlug) => {
-		const org = await orgsService.getOrgBySlug(data.orgSlug);
+	getSingleSpaceBySpaceSlugAndOrgSlug: async ({ orgSlug, spaceSlug }: TOrgAndSpaceSlug) => {
+		const org = await orgsService.getOrgBySlug(orgSlug);
 
 		const space = await db.space.findUnique({
 			where: {
 				slug_organizationId: {
-					slug: data.spaceSlug,
+					slug: spaceSlug,
 					organizationId: org.id,
 				},
 			},
@@ -68,14 +68,14 @@ export const spacesService = {
 		return space;
 	},
 
-	deleteSpace: async (userId: string, data: TOrgAndSpaceSlug) => {
-		const isOwner = await orgsService.isUserOwner(userId, data.orgSlug);
+	deleteSpace: async (userId: string, { orgSlug, spaceSlug }: TOrgAndSpaceSlug) => {
+		const isOwner = await orgsService.isUserOwner(userId, orgSlug);
 
 		if (!isOwner) {
 			throw new HTTPException(403, { message: "Forbidden: Only Owner is allowed to delete Organization" });
 		}
 
-		const space = await spacesService.getSpaceBySpaceSlugAndOrgId(data.spaceSlug, data.orgSlug);
+		const space = await spacesService.getSpaceBySpaceSlugAndOrgId(spaceSlug, orgSlug);
 
 		await db.space.delete({
 			where: { id: space.id },

@@ -51,14 +51,14 @@ export const orgsService = {
 		return org;
 	},
 
-	deleteOrganization: async (userId: string, data: TOrgSlugSchema) => {
-		const isOwner = await orgsService.isUserOwner(userId, data.orgSlug);
+	deleteOrganization: async (userId: string, { orgSlug }: TOrgSlugSchema) => {
+		const isOwner = await orgsService.isUserOwner(userId, orgSlug);
 
 		if (!isOwner) {
 			throw new HTTPException(403, { message: "Forbidden: Only Owner is allowed to delete Organization" });
 		}
 
-		const org = await orgsService.getOrgBySlug(data.orgSlug);
+		const org = await orgsService.getOrgBySlug(orgSlug);
 
 		await db.organization.delete({
 			where: { id: org.id },

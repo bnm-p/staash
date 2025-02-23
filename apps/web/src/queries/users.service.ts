@@ -2,6 +2,7 @@ import { db } from "@/lib/db";
 import type { Context } from "hono";
 import { HTTPException } from "hono/http-exception";
 import { orgsService } from "./orgs.service";
+import type { TOrgSlugAndId } from "@/validators/orgs.schema";
 
 export const usersService = {
 	getUser: async (c: Context) => {
@@ -50,7 +51,7 @@ export const usersService = {
 		return await orgsService.getOrgById(user.lastActiveOrgId);
 	},
 
-	setActiveOrg: async (userId: string, { orgId, orgSlug }: { orgId?: string; orgSlug?: string }) => {
+	setActiveOrg: async (userId: string, { orgId, orgSlug }: TOrgSlugAndId) => {
 		if (!orgId && !orgSlug) {
 			throw new Error("Requires either orgId or orgSlug.");
 		}
