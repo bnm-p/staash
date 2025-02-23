@@ -92,12 +92,12 @@ export const ImageUpload = ({
 						>
 							<X className="h-4 w-4" />
 						</button>
-						<div className={cn("mx-auto overflow-hidden", sizeMap[previewSize], previewClassName)}>
+						<div className={cn("overflow-hidden", sizeMap[previewSize], previewClassName)}>
 							<Image src={preview} alt="Image preview" width={96} height={96} className="h-full w-full object-cover" />
 						</div>
 					</div>
 				) : (
-					<Sparkle className="mx-auto h-10 w-10 text-muted-foreground/50" />
+					<Sparkle className="h-10 w-10 text-muted-foreground/50" />
 				)}
 				<p className="mt-2 text-muted-foreground text-sm">{preview ? "Click or drag to replace" : placeholder}</p>
 			</div>

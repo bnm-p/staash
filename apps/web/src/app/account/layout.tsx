@@ -21,7 +21,7 @@ export default async function AccountLayout({
 			<Nav showOrgSwitch={false} />
 			<PageHeader title="Account Settings" />
 			<div className="flex min-h-[calc(100svh-3.5rem)]">
-				<main className="container mx-auto">{children}</main>
+				<main className="container">{children}</main>
 			</div>
 			<Footer />
 		</div>

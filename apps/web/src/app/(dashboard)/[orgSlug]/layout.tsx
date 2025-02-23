@@ -22,7 +22,7 @@ export default async function OrgLayout({
 			<Nav />
 			{subnav}
 			<div className="flex min-h-[calc(100svh-3.5rem)]">
-				<main className="container mx-auto">{children}</main>
+				<main className="container">{children}</main>
 			</div>
 			<Footer />
 		</div>
