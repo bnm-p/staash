@@ -11,7 +11,7 @@ interface IPageHeaderProps extends React.ComponentProps<"div"> {
 }
 
 export const PageHeader: FC<IPageHeaderProps> = ({ title, className, ...props }) => {
-	const y = useScrollPosition(60);
+	const y = useScrollPosition(120);
 	const navHeight = useRange(y, 0, 50, 112, 64);
 	const textScale = useRange(y, 0, 50, 1, 0.5);
 
