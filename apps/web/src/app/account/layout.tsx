@@ -25,11 +25,12 @@ export default async function AccountLayout({
 				<main className="container grid grid-cols-[240px_1fr] gap-8 px-8 pt-20">
 					<SideNavigation
 						className="-translate-x-3"
+						base="/account"
 						items={[
-							{ path: "/account", label: "General" },
-							{ path: "/account/connections", label: "Connections" },
-							{ path: "/account/tokens", label: "Tokens" },
-							{ path: "/account/notifications", label: "Notifications" },
+							{ path: "/", label: "General" },
+							{ path: "/connections", label: "Connections" },
+							{ path: "/tokens", label: "Tokens" },
+							{ path: "/notifications", label: "Notifications" },
 						]}
 					/>
 					<div className="pt-4">

@@ -7,25 +7,36 @@ import { type FC, useEffect, useState } from "react";
 
 interface ISideNavigationProps extends React.ComponentProps<"aside"> {
 	items: { path: string; label: string }[];
+	base: string;
 }
 
-export const SideNavigation: FC<ISideNavigationProps> = ({ items, className, ...props }) => {
-	const [activePath, setActivePath] = useState<string>("");
+export const SideNavigation: FC<ISideNavigationProps> = ({ items, base, className, ...props }) => {
+	const [activePath, setActivePath] = useState<string>(items[0].path);
 	const [hoveredPath, setHoveredPath] = useState<string | null>(null);
 
 	const pathname = usePathname();
 	const router = useRouter();
 
 	useEffect(() => {
-		const activeTab = items.find((tab) => pathname.startsWith(tab.path));
-		if (activeTab) {
-			setActivePath(activeTab.path);
+		if (!pathname) return;
+
+		// Remove the base segment from the pathname.
+		let relativePath = pathname.replace(new RegExp(`^${base}`), "");
+		// Default to the first item if relative path is empty.
+		if (relativePath === "" || relativePath === "/") {
+			setActivePath(items[0].path);
+			return;
 		}
-	}, [pathname, items]);
+
+		// Sort items by descending path length so that more specific routes match first.
+		const sortedItems = [...items].sort((a, b) => b.path.length - a.path.length);
+		const matchedItem = sortedItems.find((item) => relativePath === item.path || relativePath.startsWith(`${item.path}/`));
+		setActivePath(matchedItem ? matchedItem.path : items[0].path);
+	}, [pathname, items, base]);
 
 	const handleClick = (path: string) => {
 		setActivePath(path);
-		router.push(path);
+		router.push(`${base}${path === "/" ? "" : path}`);
 	};
 
 	return (
@@ -36,7 +47,7 @@ export const SideNavigation: FC<ISideNavigationProps> = ({ items, className, ...
 					type="button"
 					onClick={() => handleClick(item.path)}
 					onMouseEnter={() => setHoveredPath(item.path)}
-					className={cn("group relative w-full text-left transition", activePath === item.path && "font-semibold")}
+					className={cn("group relative w-full text-left", activePath === item.path && "font-bold")}
 				>
 					<span
 						className="relative block px-3 py-1.5 text-sm text-white outline-sky-400"
@@ -44,20 +55,13 @@ export const SideNavigation: FC<ISideNavigationProps> = ({ items, className, ...
 					>
 						{hoveredPath === item.path && (
 							<motion.span
-								layoutId="bubble"
+								layoutId="sidenav-bubble"
 								className="absolute inset-0 rounded-md bg-muted opacity-0 transition-opacity duration-200 ease-out group-hover:opacity-100"
 								transition={{ ease: [0.65, 0.05, 0, 1], duration: 0.275 }}
 							/>
 						)}
 						<span className="relative z-10">{item.label}</span>
 					</span>
-					{activePath === item.path && (
-						<motion.span
-							layoutId="line"
-							className="absolute inset-y-0 left-0 z-10 w-px bg-white"
-							transition={{ ease: [0.65, 0.05, 0, 1], duration: 0.275 }}
-						/>
-					)}
 				</button>
 			))}
 		</aside>
