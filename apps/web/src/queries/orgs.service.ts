@@ -3,9 +3,32 @@ import type { TOrgCreateSchema, TOrgSlugSchema } from "@/validators/orgs.schema"
 import type { Context } from "hono";
 import { HTTPException } from "hono/http-exception";
 import { usersService } from "./users.service";
-import type { User } from "@prisma/client";
+import type { User } from "better-auth";
 
 export const orgsService = {
+	getAllOrgsForCurrentUser: async (userId: string) => {
+		const members = await db.member.findMany({
+			where: {
+				userId: userId,
+			},
+			include: {
+				organization: {
+					include: {
+						spaces: true,
+					},
+				},
+			},
+		});
+
+		const orgs = members.map((member) => {
+			return member.organization;
+		});
+
+		console.log(orgs, "hier!");
+
+		return orgs;
+	},
+
 	getOrgBySlug: async (orgSlug: string) => {
 		const org = await db.organization.findUnique({
 			where: {
