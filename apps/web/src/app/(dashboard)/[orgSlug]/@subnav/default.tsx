@@ -1,5 +1,5 @@
 import OrgSubnav from "./org-subnav";
 
-export default function OrgSubNav() {
+export default function DEFAULT() {
 	return <OrgSubnav />;
 }
