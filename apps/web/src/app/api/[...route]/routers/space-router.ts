@@ -3,6 +3,7 @@ import { zValidator } from "@hono/zod-validator";
 import { spacesService } from "@/queries/spaces.service";
 import { orgAndSpaceSlug, spaceCreateSchema } from "@/validators/spaces.schema";
 import { orgSlugSchema } from "@/validators/orgs.schema";
+import { usersService } from "@/queries/users.service";
 
 export const spaceRouter = new Hono()
 	.post("/", zValidator("form", spaceCreateSchema), async (c) => {
@@ -15,7 +16,9 @@ export const spaceRouter = new Hono()
 		return c.json(await spacesService.getSingleSpaceBySpaceSlugAndOrgSlug(c.req.valid("param")));
 	})
 	.delete("/:spaceSlug", zValidator("param", orgAndSpaceSlug), async (c) => {
-		return (await spacesService.deleteSpace(c, c.req.valid("param")))
+		const user = await usersService.getUser(c);
+
+		return (await spacesService.deleteSpace(user.id, c.req.valid("param")))
 			? c.json({ message: "Space deleted successfully" })
 			: c.json({ message: "Space not deleted successfully" });
 	});

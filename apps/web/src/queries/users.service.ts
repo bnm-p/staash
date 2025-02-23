@@ -1,4 +1,3 @@
-import { orgSlugSchema } from "@/validators/orgs.schema";
 import { db } from "@/lib/db";
 import type { Context } from "hono";
 import { HTTPException } from "hono/http-exception";

@@ -3,8 +3,6 @@ import { HTTPException } from "hono/http-exception";
 import { orgsService } from "./orgs.service";
 import type { TOrgAndSpaceSlug, TSpaceCreateSchema } from "@/validators/spaces.schema";
 import type { TOrgSlugSchema } from "@/validators/orgs.schema";
-import type { Context } from "hono";
-import { usersService } from "./users.service";
 
 export const spacesService = {
 	getSpaceBySpaceSlugAndOrgId: async (spaceSlug: string, organizationId: string) => {
@@ -70,8 +68,8 @@ export const spacesService = {
 		return space;
 	},
 
-	deleteSpace: async (c: Context, data: TOrgAndSpaceSlug) => {
-		const isOwner = await orgsService.isUserOwner(c, data.orgSlug);
+	deleteSpace: async (userId: string, data: TOrgAndSpaceSlug) => {
+		const isOwner = await orgsService.isUserOwner(userId, data.orgSlug);
 
 		if (!isOwner) {
 			throw new HTTPException(403, { message: "Forbidden: Only Owner is allowed to delete Organization" });

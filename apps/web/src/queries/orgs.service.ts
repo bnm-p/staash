@@ -1,9 +1,6 @@
 import { db } from "@/lib/db";
 import type { TOrgCreateSchema, TOrgSlugSchema } from "@/validators/orgs.schema";
-import type { Context } from "hono";
 import { HTTPException } from "hono/http-exception";
-import { usersService } from "./users.service";
-import type { User } from "better-auth";
 
 export const orgsService = {
 	getOrgBySlug: async (orgSlug: string) => {
@@ -34,9 +31,7 @@ export const orgsService = {
 		return org;
 	},
 
-	createOrganization: async (c: Context, data: TOrgCreateSchema) => {
-		const user = await usersService.getUser(c);
-
+	createOrganization: async (userId: string, data: TOrgCreateSchema) => {
 		const org = await db.organization.create({
 			data: {
 				name: data.name,
@@ -47,7 +42,7 @@ export const orgsService = {
 
 		await db.member.create({
 			data: {
-				userId: user.id,
+				userId: userId,
 				organizationId: org.id,
 				role: "owner",
 			},
@@ -56,8 +51,8 @@ export const orgsService = {
 		return org;
 	},
 
-	deleteOrganization: async (c: Context, data: TOrgSlugSchema) => {
-		const isOwner = await orgsService.isUserOwner(c, data.orgSlug);
+	deleteOrganization: async (userId: string, data: TOrgSlugSchema) => {
+		const isOwner = await orgsService.isUserOwner(userId, data.orgSlug);
 
 		if (!isOwner) {
 			throw new HTTPException(403, { message: "Forbidden: Only Owner is allowed to delete Organization" });
@@ -72,11 +67,9 @@ export const orgsService = {
 		return true;
 	},
 
-	isUserOwner: async (c: Context, orgSlug: string) => {
-		const user = await usersService.getUser(c);
-
+	isUserOwner: async (userId: string, orgSlug: string) => {
 		const member = await db.member.findFirst({
-			where: { organization: { slug: orgSlug }, userId: user.id },
+			where: { organization: { slug: orgSlug }, userId: userId },
 			select: { role: true },
 		});
 
