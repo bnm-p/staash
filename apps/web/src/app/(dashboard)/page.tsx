@@ -2,7 +2,6 @@ import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { orgsService } from "@/queries/orgs.service";
 import { usersService } from "@/queries/users.service";
-import type { Organization } from "@prisma/client";
 import type { NextPage } from "next";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
@@ -15,8 +14,17 @@ const IndexPage: NextPage = async () => {
 		return;
 	}
 
-	const organizations = await usersService.getAllOrgsForCurrentUser(session?.user.id);
+	const dbUser = await db.user.findUnique({
+		where: { id: session?.user.id },
+	});
 
+	if (dbUser?.lastActiveOrgId) {
+		const org = await orgsService.getOrgById(dbUser?.lastActiveOrgId);
+
+		return redirect(`/${org.slug}`);
+	}
+
+	const organizations = await usersService.getAllOrgsForCurrentUser(session?.user.id);
 
 	if (organizations?.length === 0) {
 		return redirect("/create");

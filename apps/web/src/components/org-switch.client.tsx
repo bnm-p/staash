@@ -1,6 +1,5 @@
 "use client";
 
-import { authClient } from "@/lib/auth-client";
 import type { Organization, Space } from "@prisma/client";
 import { Avatar, AvatarFallback, AvatarImage } from "@workspace/ui/components/avatar";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@workspace/ui/components/command";
@@ -12,6 +11,7 @@ import { type FC, useCallback, useEffect, useRef, useState } from "react";
 import type { IOrgSwitchProps } from "./org-switch";
 import type { OrganizationWithSpaces } from "@/lib/types";
 import { useModal } from "@/hooks/use-modal";
+import { useActiveOrg } from "@/hooks/use-active-org";
 
 interface IOrgSwitchClientProps extends IOrgSwitchProps {
 	organizations: OrganizationWithSpaces[];
@@ -23,9 +23,11 @@ export const OrgSwitchClient: FC<IOrgSwitchClientProps> = ({ className, organiza
 	const pathname = usePathname();
 	const modal = useModal();
 	const params = useParams<{ orgSlug?: string; spaceSlug?: string }>();
-	const { data: activeOrganization } = authClient.useActiveOrganization();
-	const [hoveredOrg, setHoveredOrg] = useState<Partial<Organization> | null>(activeOrganization);
-	const [activeOrganizationName, setActiveOrganizationName] = useState<string>(activeOrganization?.name || "");
+
+	const { activeOrg, setActiveOrg } = useActiveOrg();
+
+	const [hoveredOrg, setHoveredOrg] = useState<Partial<Organization> | null>(activeOrg || null);
+	const [activeOrganizationName, setActiveOrganizationName] = useState<string>(activeOrg?.name || "");
 	const [spaces, setSpaces] = useState<Space[]>([]);
 	const [selectedSpace, setSelectedSpace] = useState<Space | null>(null);
 
@@ -61,8 +63,8 @@ export const OrgSwitchClient: FC<IOrgSwitchClientProps> = ({ className, organiza
 		async (org: Organization) => {
 			if (!org.slug) return;
 
-			authClient.organization.setActive({
-				organizationSlug: org.slug,
+			setActiveOrg({
+				orgSlug: org.slug,
 			});
 
 			setSelectedSpace(null);
@@ -70,13 +72,13 @@ export const OrgSwitchClient: FC<IOrgSwitchClientProps> = ({ className, organiza
 			router.refresh();
 			router.push(`/${org.slug}`);
 		},
-		[router],
+		[router, setActiveOrg],
 	);
 
 	useEffect(() => {
-		if (!activeOrganization) return;
-		setActiveOrganizationName(activeOrganization.name);
-	}, [activeOrganization]);
+		if (!activeOrg) return;
+		setActiveOrganizationName(activeOrg.name);
+	}, [activeOrg]);
 
 	useEffect(() => {
 		const { orgSlug } = params;
@@ -88,9 +90,9 @@ export const OrgSwitchClient: FC<IOrgSwitchClientProps> = ({ className, organiza
 				return;
 			}
 
-			authClient.organization.setActive({ organizationId: org.id });
+			setActiveOrg({ orgId: org.id });
 		}
-	}, [organizations, router, params]);
+	}, [organizations, router, params, setActiveOrg]);
 
 	useEffect(() => {
 		const segments = pathname.split("/").filter(Boolean);
@@ -158,8 +160,8 @@ export const OrgSwitchClient: FC<IOrgSwitchClientProps> = ({ className, organiza
 				>
 					<div className="flex items-center gap-2">
 						<Avatar className="size-6">
-							<AvatarImage src={activeOrganization?.logo || ""} alt={activeOrganization?.name} />
-							<AvatarFallback className="text-xs">{activeOrganization?.name[0]}</AvatarFallback>
+							<AvatarImage src={activeOrg?.logo || ""} alt={activeOrg?.name} />
+							<AvatarFallback className="text-xs">{activeOrg?.name[0]}</AvatarFallback>
 						</Avatar>
 						<span className="text-sm">
 							{activeOrganizationName}
@@ -189,7 +191,7 @@ export const OrgSwitchClient: FC<IOrgSwitchClientProps> = ({ className, organiza
 												<AvatarFallback className="text-xs">{org.name[0]}</AvatarFallback>
 											</Avatar>
 											<span>{org.name}</span>
-											<Check className={cn("ml-auto h-4 w-4", activeOrganization?.id === org.id ? "opacity-100" : "opacity-0")} />
+											<Check className={cn("ml-auto h-4 w-4", activeOrg?.id === org.id ? "opacity-100" : "opacity-0")} />
 										</CommandItem>
 									))}
 									<CommandItem
