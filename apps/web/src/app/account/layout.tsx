@@ -22,7 +22,7 @@ export default async function AccountLayout({
 			<Nav showOrgSwitch={false} />
 			<PageHeader title="Account Settings" />
 			<div className="flex min-h-[calc(100svh-3.5rem)]">
-				<main className="container grid grid-cols-[240px_1fr] gap-8 px-8 pt-20">
+				<main className="container grid grid-cols-[240px_1fr] gap-8 px-8 pt-20 pb-20">
 					<SideNavigation
 						className="-translate-x-3"
 						items={[

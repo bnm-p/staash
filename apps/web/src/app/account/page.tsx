@@ -1,5 +1,6 @@
 "use client";
 
+import { ProfileSettingsCard } from "@/components/profile-settings-card";
 import { authClient } from "@/lib/auth-client";
 import { Avatar, AvatarFallback, AvatarImage } from "@workspace/ui/components/avatar";
 import { Button } from "@workspace/ui/components/button";
@@ -37,9 +38,27 @@ const AccountPage: NextPage = () => {
 							</CardContent>
 						</div>
 						<CardFooter className="px-6 py-4">
-							<Button>Save</Button>
+							<Button disabled>Save</Button>
 						</CardFooter>
 					</Card>
+					<ProfileSettingsCard
+						label="Username"
+						description="Choose anything you are comfortable with be called or displayed"
+						value={session?.user?.name || ""}
+					/>
+					<ProfileSettingsCard
+						label="Email"
+						description="Enter email address which is chosen for logging in. You’ll get a email to verify your changed email address."
+						value={session?.user?.email || ""}
+					/>
+					<ProfileSettingsCard
+						label="Your ID"
+						description="This is your unique identifier."
+						value={session?.user?.id || ""}
+						isReadOnly
+						hasSaveButton={false}
+						isCopyable
+					/>
 				</div>
 			</div>
 		</div>
