@@ -7,10 +7,10 @@ import { usersService } from "@/queries/users.service";
 
 export const orgRouter = new Hono()
 	.route("/:orgSlug/spaces", spaceRouter)
-	.post("/", zValidator("form", orgCreateSchema), async (c) => {
+	.post("/", zValidator("json", orgCreateSchema), async (c) => {
 		const user = await usersService.getUser(c);
 
-		return c.json(await orgsService.createOrganization(user.id, c.req.valid("form")));
+		return c.json(await orgsService.createOrganization(user.id, c.req.valid("json")));
 	})
 	.get("/:orgSlug", zValidator("param", orgSlugSchema), async (c) => {
 		return c.json(await orgsService.getOrgBySlug(c.req.valid("param").orgSlug));

@@ -6,8 +6,8 @@ import { orgSlugSchema } from "@/validators/orgs.schema";
 import { usersService } from "@/queries/users.service";
 
 export const spaceRouter = new Hono()
-	.post("/", zValidator("form", spaceCreateSchema), async (c) => {
-		return c.json(await spacesService.createSpace(c.req.valid("form")));
+	.post("/", zValidator("json", spaceCreateSchema), async (c) => {
+		return c.json(await spacesService.createSpace(c.req.valid("json")));
 	})
 	.get("/", zValidator("param", orgSlugSchema), async (c) => {
 		return c.json(await spacesService.getAllSpacesByOrgSlug(c.req.valid("param")));

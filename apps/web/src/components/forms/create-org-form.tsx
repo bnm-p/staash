@@ -89,7 +89,7 @@ export const CreateOrgForm: FC<ICreateOrgFormProps> = ({ className, ...props }) 
 
 			// Create organization
 			const res = await client.api.orgs.$post({
-				form: {
+				json: {
 					...values,
 					logo: logoUrl,
 				},

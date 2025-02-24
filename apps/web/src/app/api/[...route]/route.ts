@@ -5,6 +5,7 @@ import { auth } from "@/lib/auth";
 import { orgRouter } from "./routers/org-router";
 import { orgMiddleware } from "./middleware/org-middleware";
 import { userRouter } from "./routers/users-router";
+import { errorHandler } from "./middleware/error-middleware";
 
 export const runtime = "edge";
 
@@ -44,6 +45,7 @@ app.use(
 );
 
 app.use("/orgs/:orgSlug/*", orgMiddleware);
+app.use("*", errorHandler);
 
 app.on(["POST", "GET"], "/auth/*", (c) => {
 	return auth.handler(c.req.raw);
