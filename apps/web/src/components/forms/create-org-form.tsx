@@ -81,10 +81,10 @@ export const CreateOrgForm: FC<ICreateOrgFormProps> = ({ className, ...props }) 
 			let logoUrl = "";
 			if (pendingLogo) {
 				const uploadResult = await startUpload([pendingLogo]);
-				if (!uploadResult?.[0]?.url) {
+				if (!uploadResult?.[0]?.ufsUrl) {
 					throw new Error("Logo upload failed");
 				}
-				logoUrl = uploadResult[0].url;
+				logoUrl = uploadResult[0].ufsUrl;
 			}
 
 			// Create organization
