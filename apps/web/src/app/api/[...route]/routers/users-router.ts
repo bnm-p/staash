@@ -1,6 +1,6 @@
 import { usersService } from "@/queries/users.service";
 import { orgSlugAndIdSchema } from "@/validators/orgs.schema";
-import { zValidator } from "@hono/zod-validator";
+import { zValidator } from "@/validators/validator-wrapper";
 import { Hono } from "hono";
 
 export const userRouter = new Hono()

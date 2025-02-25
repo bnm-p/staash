@@ -3,90 +3,115 @@ import type { Context } from "hono";
 import { HTTPException } from "hono/http-exception";
 import { orgsService } from "./orgs.service";
 import type { TOrgSlugAndId } from "@/validators/orgs.schema";
+import { errorService } from "./error.service";
 
 export const usersService = {
 	getUser: async (c: Context) => {
-		const user = c.get("user");
+		try {
+			const user = c.get("user");
 
-		if (!user) {
-			throw new HTTPException(401, { message: "Unauthorized" });
+			if (!user) {
+				throw new HTTPException(401, { message: "Unauthorized" });
+			}
+
+			return user;
+		} catch (error: unknown) {
+			return errorService.handleServiceError("Error while trying to fetch User", error);
 		}
-
-		return user;
 	},
 
 	getUserById: async (userId: string) => {
-		const user = db.user.findUnique({
-			where: {
-				id: userId,
-			},
-		});
+		try {
+			const user = db.user.findUnique({
+				where: {
+					id: userId,
+				},
+			});
 
-		if (!user) {
-			throw new HTTPException(401, { message: "Unauthorized" });
+			if (!user) {
+				throw new HTTPException(401, { message: "Unauthorized" });
+			}
+
+			return user;
+		} catch (error: unknown) {
+			return errorService.handleServiceError("Error while trying to fetch User", error);
 		}
-
-		return user;
 	},
 
 	getAllOrgsForCurrentUser: async (userId: string) => {
-		const members = await db.member.findMany({
-			where: {
-				userId: userId,
-			},
-			include: {
-				organization: {
-					include: {
-						spaces: true,
+		try {
+			const members = await db.member.findMany({
+				where: {
+					userId: userId,
+				},
+				include: {
+					organization: {
+						include: {
+							spaces: true,
+						},
 					},
 				},
-			},
-		});
+			});
 
-		const orgs = members.map((member) => {
-			return member.organization;
-		});
+			const orgs = members.map((member) => {
+				return member.organization;
+			});
 
-		return orgs;
+			return orgs;
+		} catch (error: unknown) {
+			return errorService.handleServiceError("Error while trying to fetch all organization for current user", error);
+		}
 	},
 	getActiveOrg: async (userId: string) => {
-		const user = await db.user.findUnique({
-			where: {
-				id: userId,
-			},
-			select: {
-				lastActiveOrgId: true,
-			},
-		});
+		try {
+			const user = await db.user.findUnique({
+				where: {
+					id: userId,
+				},
+				select: {
+					lastActiveOrgId: true,
+				},
+			});
 
-		if (!user?.lastActiveOrgId) {
-			return null;
+			if (!user?.lastActiveOrgId) {
+				return null;
+			}
+
+			return await orgsService.getOrgById(user.lastActiveOrgId);
+		} catch (error: unknown) {
+			return errorService.handleServiceError("Error while trying to fetch last active organization", error);
 		}
-
-		return await orgsService.getOrgById(user.lastActiveOrgId);
 	},
 
 	setActiveOrg: async (userId: string, { orgId, orgSlug }: TOrgSlugAndId) => {
-		if (!orgId && !orgSlug) {
-			throw new Error("Requires either orgId or orgSlug.");
+		try {
+			if (!orgId && !orgSlug) {
+				throw new HTTPException(400, { message: "Requires either orgId or orgSlug." });
+			}
+
+			if (orgSlug) {
+				const org = await orgsService.getOrgBySlug(orgSlug); //check if Org exists and fetch ID
+				orgId = org.id;
+			} else if (orgId) {
+				await orgsService.getOrgById(orgId); //check if Org exists
+			}
+
+			const org = await db.user.update({
+				where: {
+					id: userId,
+				},
+				data: {
+					lastActiveOrgId: orgId,
+				},
+			});
+
+			if (!org) {
+				throw new HTTPException(500, { message: "Failed to update last active organization" });
+			}
+
+			return org;
+		} catch (error: unknown) {
+			return errorService.handleServiceError("Error while trying to update last active organization", error);
 		}
-
-		if (orgSlug) {
-			const org = await orgsService.getOrgBySlug(orgSlug);
-			orgId = org.id;
-		} else if (orgId) {
-			await orgsService.getOrgById(orgId);
-		}
-
-		const org = await db.user.update({
-			where: {
-				id: userId,
-			},
-			data: {
-				lastActiveOrgId: orgId,
-			},
-		});
-
-		return org;
 	},
 };
