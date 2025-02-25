@@ -22,5 +22,5 @@ export const spaceRouter = new Hono()
 
 		return (await spacesService.deleteSpace(user.id, c.req.valid("param")))
 			? c.json({ message: "Space deleted successfully" }, 202)
-			: c.json({ message: "Space not deleted successfully" }, 202);
+			: c.json({ message: "Space not deleted successfully" }, 500);
 	});

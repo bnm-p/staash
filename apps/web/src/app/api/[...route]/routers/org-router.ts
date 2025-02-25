@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import { spaceRouter } from "./space-router";
 import { orgsService } from "@/queries/orgs.service";
-import { orgCreateSchema, orgSlugSchema } from "@/validators/orgs.schema";
+import { orgCreateSchema, orgSlugSchema, orgUpdateSchmea } from "@/validators/orgs.schema";
 import { usersService } from "@/queries/users.service";
 import { zValidator } from "@/validators/validator-wrapper";
 
@@ -21,5 +21,14 @@ export const orgRouter = new Hono()
 
 		return (await orgsService.deleteOrganization(user.id, c.req.valid("param")))
 			? c.json({ message: "Organization deleted successfully" }, 202)
-			: c.json({ message: "Organization not deleted successfully" }, 202);
+			: c.json({ message: "Organization not deleted successfully" }, 500);
+	})
+	.patch("/:orgSlug", zValidator("json", orgUpdateSchmea), async (c) => {
+		const user = await usersService.getUser(c);
+		const orgSlug = c.req.param("orgSlug");
+		const updateData = c.req.valid("json");
+
+		const updatedOrg = await orgsService.updateOrganization(user.id, orgSlug, updateData);
+
+		return c.json({ message: "Organization updated successfully", body: updatedOrg }, 200);
 	});
