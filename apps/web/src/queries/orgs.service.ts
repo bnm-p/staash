@@ -12,7 +12,7 @@ export const orgsService = {
 			});
 
 			if (!org) {
-				throw new HTTPException(400, { message: "No organization with this slug" });
+				throw new HTTPException(404, { message: "No organization with this slug" });
 			}
 
 			return org;
@@ -28,7 +28,7 @@ export const orgsService = {
 			});
 
 			if (!org) {
-				throw new HTTPException(400, { message: "No organization with this id" });
+				throw new HTTPException(404, { message: "No organization with this id" });
 			}
 
 			return org;

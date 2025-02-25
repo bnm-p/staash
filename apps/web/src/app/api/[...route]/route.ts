@@ -45,7 +45,10 @@ app.use(
 );
 
 app.use("/orgs/:orgSlug/*", orgMiddleware);
-app.use("*", errorHandler);
+
+app.onError((err, c) => {
+	return errorHandler(c, err);
+});
 
 app.on(["POST", "GET"], "/auth/*", (c) => {
 	return auth.handler(c.req.raw);

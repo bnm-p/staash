@@ -1,8 +1,8 @@
 import { z } from "zod";
 
 export const orgCreateSchema = z.object({
-	name: z.string(),
-	slug: z.string(),
+	name: z.string().min(1, "Name cannot be empty"),
+	slug: z.string().min(1, "Slug cannot be empty"),
 	logo: z.string().optional(),
 });
 

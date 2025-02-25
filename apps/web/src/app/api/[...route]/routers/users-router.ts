@@ -11,8 +11,9 @@ export const userRouter = new Hono()
 	})
 	.put("/activeOrg", zValidator("json", orgSlugAndIdSchema), async (c) => {
 		const user = await usersService.getUser(c);
+		const org = await usersService.setActiveOrg(user.id, c.req.valid("json"));
 
-		return c.json(await usersService.setActiveOrg(user.id, c.req.valid("json")));
+		return c.json({ message: "Sucessfully updated activeOrg", body: org }, 200);
 	})
 	.get("/orgs", async (c) => {
 		return c.json(await usersService.getAllOrgsForCurrentUser((await usersService.getUser(c)).id));

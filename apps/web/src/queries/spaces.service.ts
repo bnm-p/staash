@@ -19,7 +19,7 @@ export const spacesService = {
 			});
 
 			if (!spaces) {
-				throw new HTTPException(400, { message: "No space with such slug in this organization" });
+				throw new HTTPException(404, { message: "No space with such slug in this organization" });
 			}
 
 			return spaces;
@@ -94,7 +94,7 @@ export const spacesService = {
 			});
 
 			if (!space) {
-				throw new HTTPException(400, { message: "No space with this slug in this organization" });
+				throw new HTTPException(404, { message: "No space with this slug in this organization" });
 			}
 
 			return space;
@@ -111,7 +111,7 @@ export const spacesService = {
 				throw new HTTPException(403, { message: "Forbidden: Only Owner is allowed to delete Organization" });
 			}
 
-			const space = await spacesService.getSpaceBySpaceSlugAndOrgId(spaceSlug, orgSlug);
+			const space = await spacesService.getSpaceBySpaceSlugAndOrgSlug(spaceSlug, orgSlug);
 
 			const deletedSpace = await db.space.delete({
 				where: { id: space.id },

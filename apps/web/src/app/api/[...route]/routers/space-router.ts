@@ -1,13 +1,15 @@
 import { Hono } from "hono";
-import { zValidator } from "@hono/zod-validator";
 import { spacesService } from "@/queries/spaces.service";
 import { orgAndSpaceSlug, spaceCreateSchema } from "@/validators/spaces.schema";
 import { orgSlugSchema } from "@/validators/orgs.schema";
 import { usersService } from "@/queries/users.service";
+import { zValidator } from "@/validators/validator-wrapper";
 
 export const spaceRouter = new Hono()
 	.post("/", zValidator("json", spaceCreateSchema), async (c) => {
-		return c.json(await spacesService.createSpace(c.req.valid("json")));
+		const space = await spacesService.createSpace(c.req.valid("json"));
+
+		return c.json({ message: "Sucessfully created space", body: space }, 201);
 	})
 	.get("/", zValidator("param", orgSlugSchema), async (c) => {
 		return c.json(await spacesService.getAllSpacesByOrgSlug(c.req.valid("param")));
@@ -19,6 +21,6 @@ export const spaceRouter = new Hono()
 		const user = await usersService.getUser(c);
 
 		return (await spacesService.deleteSpace(user.id, c.req.valid("param")))
-			? c.json({ message: "Space deleted successfully" })
-			: c.json({ message: "Space not deleted successfully" });
+			? c.json({ message: "Space deleted successfully" }, 202)
+			: c.json({ message: "Space not deleted successfully" }, 202);
 	});
