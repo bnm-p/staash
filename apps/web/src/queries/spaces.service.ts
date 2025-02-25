@@ -1,7 +1,7 @@
 import { db } from "@/lib/db";
 import { HTTPException } from "hono/http-exception";
 import { orgsService } from "./orgs.service";
-import type { TOrgAndSpaceSlug, TSpaceCreateSchema } from "@/validators/spaces.schema";
+import type { TOrgAndSpaceSlug, TSpaceCreateSchema, TSpaceUpdateSchema } from "@/validators/spaces.schema";
 import type { TOrgSlugSchema } from "@/validators/orgs.schema";
 import { errorService } from "./error.service";
 import { Prisma } from "@prisma/client";
@@ -99,7 +99,37 @@ export const spacesService = {
 
 			return space;
 		} catch (error: unknown) {
-			return errorService.handleServiceError("Error while trying to fetch Spaces", error);
+			return errorService.handleServiceError("Error while trying to fetch spaces", error);
+		}
+	},
+
+	updateSpace: async (userId: string, orgSlug: string, spaceSlug: string, data: TSpaceUpdateSchema) => {
+		try {
+			const isOwner = await orgsService.isUserOwner(userId, orgSlug);
+
+			if (!isOwner) {
+				throw new HTTPException(403, { message: "Forbidden: Only Owner is allowed to delete Organization" });
+			}
+
+			const org = await orgsService.getOrgBySlug(orgSlug);
+
+			const cleanData = Object.fromEntries(Object.entries(data).filter(([_, value]) => value !== undefined));
+
+			const updatedSpace = await db.space.update({
+				where: {
+					slug_organizationId: {
+						slug: spaceSlug,
+						organizationId: org.id,
+					},
+				},
+				data: {
+					...cleanData,
+				},
+			});
+
+			return updatedSpace;
+		} catch (error: unknown) {
+			return errorService.handleServiceError("Error while trying to update space", error);
 		}
 	},
 

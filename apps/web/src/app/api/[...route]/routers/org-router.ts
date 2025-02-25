@@ -23,9 +23,9 @@ export const orgRouter = new Hono()
 			? c.json({ message: "Organization deleted successfully" }, 202)
 			: c.json({ message: "Organization not deleted successfully" }, 500);
 	})
-	.patch("/:orgSlug", zValidator("json", orgUpdateSchmea), async (c) => {
+	.patch("/:orgSlug", zValidator("json", orgUpdateSchmea), zValidator("param", orgSlugSchema), async (c) => {
 		const user = await usersService.getUser(c);
-		const orgSlug = c.req.param("orgSlug");
+		const { orgSlug } = c.req.valid("param");
 		const updateData = c.req.valid("json");
 
 		const updatedOrg = await orgsService.updateOrganization(user.id, orgSlug, updateData);

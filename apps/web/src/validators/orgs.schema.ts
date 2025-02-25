@@ -9,7 +9,6 @@ export const orgCreateSchema = z.object({
 export const orgUpdateSchmea = z.object({
 	name: z.string().min(1, "Name cannot be empty").max(20, "Name cannot be longer than 20 Characters").optional(),
 	slug: z.string().min(1, "Slug cannot be empty").max(20, "Name cannot be longer than 20 Characters").optional(),
-	logo: z.string().optional(),
 });
 
 export const orgSlugSchema = z.object({
