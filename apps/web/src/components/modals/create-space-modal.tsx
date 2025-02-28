@@ -52,8 +52,10 @@ export const CreateSpaceModal: FC<ICreateSpaceModalProps> = ({ className }) => {
 				throw new Error("No active organization");
 			}
 
+			console.log({ modalData, values });
+
 			const res = await client.api.orgs[":orgSlug"].spaces.$post({
-				form: {
+				json: {
 					...values,
 					orgId: modalData.org.id,
 				},
@@ -68,7 +70,7 @@ export const CreateSpaceModal: FC<ICreateSpaceModalProps> = ({ className }) => {
 			router.refresh();
 			form.reset();
 			onClose();
-			router.push(`/${modalData.org.slug}/${data.slug}`);
+			router.push(`/${modalData.org.slug}/${data.body.slug}`);
 		} catch (error) {
 			console.error("Form submission error", error);
 			toast.error("Failed to submit the form. Please try again.");
