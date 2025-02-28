@@ -1,3 +1,5 @@
+"use client";
+
 import { Card, CardHeader, CardDescription, CardContent, CardFooter } from "@workspace/ui/components/card";
 import { Input } from "@workspace/ui/components/input";
 import { Button } from "@workspace/ui/components/button";
