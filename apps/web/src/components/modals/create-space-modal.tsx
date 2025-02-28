@@ -52,8 +52,6 @@ export const CreateSpaceModal: FC<ICreateSpaceModalProps> = ({ className }) => {
 				throw new Error("No active organization");
 			}
 
-			console.log({ modalData, values });
-
 			const res = await client.api.orgs[":orgSlug"].spaces.$post({
 				json: {
 					...values,
