@@ -126,6 +126,11 @@ export const orgsService = {
 				throw new HTTPException(500, { message: "Failed to delete organization" });
 			}
 
+			await db.user.update({
+				where: { id: userId },
+				data: { lastActiveOrgId: null },
+			});
+
 			return true;
 		} catch (error: unknown) {
 			return errorService.handleServiceError("Error while deleting Organization", error);

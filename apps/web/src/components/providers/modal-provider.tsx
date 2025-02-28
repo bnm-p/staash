@@ -5,6 +5,7 @@ import { CreateSpaceModal } from "../modals/create-space-modal";
 import { CreateOrgModal } from "../modals/create-org-modal";
 import { useSearchParams } from "next/navigation";
 import { useModal } from "@/hooks/use-modal";
+import { DeleteOrgModal } from "../modals/delete-org-modal";
 
 const ModalProvider: FC = () => {
 	const [isMounted, setIsMounted] = useState(false);
@@ -26,6 +27,7 @@ const ModalProvider: FC = () => {
 		<>
 			<CreateSpaceModal />
 			<CreateOrgModal />
+			<DeleteOrgModal />
 		</>
 	);
 };
