@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Dialog, DialogContent, DialogTitle, DialogHeader, DialogDescription } from "@workspace/ui/components/dialog";
 import { useRouter } from "next/navigation";
 import { Button } from "@workspace/ui/components/button";
+import { SlugInput } from "@workspace/ui/components/slug-input";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@workspace/ui/components/form";
 
 import { useCallback, useEffect, useState, type FC } from "react";
@@ -147,19 +148,15 @@ export const CreateOrgModal: FC<ICreateOrgModalProps> = ({ className }) => {
 								<FormItem className="px-8 py-6">
 									<FormLabel>Slug</FormLabel>
 									<FormControl>
-										<div className="flex items-stretch">
-											<div className="flex items-center border border-border border-r-0 bg-muted px-4 py-2 text-muted-foreground text-sm">
-												staash.app/
-											</div>
-											<Input
-												placeholder="my-organization"
-												{...field}
-												onChange={(e) => {
-													setAutoSlug(false);
-													field.onChange(e);
-												}}
-											/>
-										</div>
+										<SlugInput
+											prefix="staash.app/"
+											placeholder="my-organization"
+											{...field}
+											onChange={(e) => {
+												setAutoSlug(false);
+												field.onChange(e);
+											}}
+										/>
 									</FormControl>
 									<FormDescription>URL slug of your organization</FormDescription>
 									<FormMessage />
