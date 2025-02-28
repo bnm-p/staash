@@ -27,7 +27,7 @@ const IndexPage: NextPage = async () => {
 	const organizations = await usersService.getAllOrgsForCurrentUser(session?.user.id);
 
 	if (organizations?.length === 0) {
-		return redirect("/create");
+		return redirect("/?modalOpen=create-org");
 	}
 
 	return redirect(`/${organizations[0]?.slug}`);

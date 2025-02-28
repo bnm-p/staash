@@ -115,9 +115,9 @@ export const CreateOrgModal: FC<ICreateOrgModalProps> = ({ className }) => {
 		<Dialog open={isModalOpen} onOpenChange={handleClose}>
 			<DialogContent className="overflow-hidden p-0">
 				<DialogHeader className="px-6 pt-8">
-					<DialogTitle className="text-center font-bold text-2xl">Costomize your server</DialogTitle>
+					<DialogTitle className="text-center font-bold text-2xl">Create Organization</DialogTitle>
 					<DialogDescription className="text-center text-zinc-500">
-						Give your server a name and an icon. You can always change it later.
+						Give your organization a name and an icon. You can always change it later.
 					</DialogDescription>
 				</DialogHeader>
 				<Form {...form}>
