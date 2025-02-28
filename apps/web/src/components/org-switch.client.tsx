@@ -12,6 +12,7 @@ import { cn } from "@workspace/ui/lib/utils";
 import { Check, ChevronsUpDown, Plus } from "lucide-react";
 import { memo, useCallback, useEffect, useRef, useState } from "react";
 import type { IOrgSwitchProps } from "./org-switch";
+import { useParams } from "next/navigation";
 
 interface IOrgSwitchClientProps extends IOrgSwitchProps {
 	organizations: OrganizationWithSpaces[];
@@ -20,7 +21,14 @@ interface IOrgSwitchClientProps extends IOrgSwitchProps {
 export const OrgSwitchClient = memo(({ className, organizations, ...props }: IOrgSwitchClientProps) => {
 	const [open, setOpen] = useState(false);
 	const modal = useModal();
-	const { activeOrg } = useActiveOrg();
+	const params = useParams<{ orgSlug: string }>();
+	const { activeOrg, setActiveOrg } = useActiveOrg();
+
+	useEffect(() => {
+		if (!activeOrg && organizations.length > 0) {
+			setActiveOrg({ orgSlug: params.orgSlug });
+		}
+	}, [activeOrg, organizations, setActiveOrg, params.orgSlug]);
 
 	// Manage keyboard refs for switching inputs.
 	const orgsCommandRef = useRef<HTMLInputElement>(null);
