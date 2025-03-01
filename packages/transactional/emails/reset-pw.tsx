@@ -1,11 +1,11 @@
 import { Html, Head, Body, Container, Text, Link, Section, Tailwind, Button, Img } from "@react-email/components";
 import * as React from "react";
 
-interface StashResetPwEmailProps {
+interface StaashResetPwEmailProps {
 	resetLink?: string;
 }
 
-export const StashResetPwEmail = ({ resetLink }: StashResetPwEmailProps) => (
+export const StaashResetPwEmail = ({ resetLink }: StaashResetPwEmailProps) => (
 	<Html>
 		<Head />
 		<Tailwind>
@@ -24,20 +24,20 @@ export const StashResetPwEmail = ({ resetLink }: StashResetPwEmailProps) => (
 					<Text className="text-center text-gray-700 text-sm">Not expecting this email?</Text>
 					<Text className="text-center text-gray-700 text-sm">
 						Contact{" "}
-						<Link href="mailto:support@stash.com" className="underline">
+						<Link href="mailto:support@staash.com" className="underline">
 							support@stash.com
 						</Link>{" "}
 						if you did not request this email.
 					</Text>
 				</Container>
-				<Text className="mt-5 text-center font-extrabold text-black text-xs uppercase">Securely powered by Stash.</Text>
+				<Text className="mt-5 text-center font-extrabold text-black text-xs uppercase">Securely powered by Staash.</Text>
 			</Body>
 		</Tailwind>
 	</Html>
 );
 
-StashResetPwEmail.PreviewProps = {
+StaashResetPwEmail.PreviewProps = {
 	resetLink: "https://example.com/reset-password",
-} as StashResetPwEmailProps;
+} as StaashResetPwEmailProps;
 
-export default StashResetPwEmail;
+export default StaashResetPwEmail;

@@ -32,7 +32,7 @@ const CopyButton = ({ text }: { text: string }) => {
 
 	return (
 		<Button variant="ghost" size="icon" onClick={handleCopy}>
-			{copied ? <ClipboardCheck className="w-4 h-4 text-green-500" /> : <Clipboard className="w-4 h-4" />}
+			{copied ? <ClipboardCheck className="h-4 w-4 text-green-500" /> : <Clipboard className="h-4 w-4" />}
 		</Button>
 	);
 };
@@ -54,7 +54,7 @@ export const ProfileSettingsCard: FC<ProfileSettingsCardProps> = ({
 						<CardHeader className="p-0 text-xl">{label}</CardHeader>
 						<CardDescription className="text-base">{description}</CardDescription>
 					</div>
-					<CardContent className="p-0 flex items-center">
+					<CardContent className="flex items-center p-0">
 						<Input
 							className={isCopyable ? "w-80" : "w-96"}
 							value={value}
