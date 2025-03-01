@@ -1,5 +1,7 @@
 import type { TOrgCreateSchema, TOrgUpdateSchema } from "@/validators/orgs.schema";
 import { test, expect } from "@playwright/test";
+
+import { auth } from "@/lib/auth";
 /*test('has title', async ({ page }) => {
   await page.goto('https://playwright.dev/');
 
@@ -18,8 +20,9 @@ test('get started link', async ({ page }) => {
 });*/
 
 const BASE_URL = "http://localhost:3000/api/orgs";
+//TODO NED MITCOMITTEN
 const sessionCookie =
-	"better-auth.session_token=4vJ6ZqAzLyz2a93NaVArpmaqykd2LFcM.RIf6i4f9fdgf4HOz0kxHcb9j7Pvz9CTtuKZS9kxly%2FI%3D";
+	"better-auth.session_token=r2gI7LFlGSoK3uEr4T4XxwR6KdVOAtbN.XM0CxiNYvplPgktYbCMmR%2Fn3XbdjVBC%2Bg4XuZcTEn3s%3D";
 
 test("Organisation API Flow", async ({ request }) => {
 	const orgSlug = "ApiTestOrg";
@@ -32,6 +35,8 @@ test("Organisation API Flow", async ({ request }) => {
 	const updatedOrg: TOrgUpdateSchema = {
 		name: "UpdatedOrg",
 	};
+
+	
 
 	await test.step("POST /orgs - Create Organisation", async () => {
 		const uri = `${BASE_URL}`;
