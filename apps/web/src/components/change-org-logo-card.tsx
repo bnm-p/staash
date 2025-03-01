@@ -80,8 +80,8 @@ export const ChangeOrgLogoCard: FC<IChangeOrgLogoCardProps> = ({ organization })
 				logoUrl = uploadResult[0].ufsUrl;
 			}
 
-			const res = await client.api.orgs[":orgSlug"].logo.$put({
-				form: { logo: logoUrl },
+			const res = await client.api.orgs[":orgSlug"].$patch({
+				json: { logo: logoUrl },
 				param: { orgSlug: organization.slug },
 			});
 
@@ -89,7 +89,6 @@ export const ChangeOrgLogoCard: FC<IChangeOrgLogoCardProps> = ({ organization })
 
 			toast.success("Organization updated");
 			router.refresh();
-			router.push(`/orgs/${data.slug}`);
 		} catch (error) {
 			console.error("Form submission error", error);
 			toast.error("Failed to update organization");
