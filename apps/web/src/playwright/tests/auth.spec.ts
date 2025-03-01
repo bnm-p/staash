@@ -8,9 +8,9 @@ const __dirname = path.dirname(__filename);
 
 const authFile = path.join(__dirname, "/.auth/user.json");
 
-setup("authenticate", async ({ page }) => {
+// Add @manual tag to run this test only manually
+setup("authenticate", { tag: '@manual' }, async ({ page }) => {
 	try {
-		console.log("Starting authentication...");
 
 		await page.goto("http://localhost:3000/auth/sign-in");
 
@@ -20,13 +20,12 @@ setup("authenticate", async ({ page }) => {
 
 		// Ensure login was successful
 		await page.waitForTimeout(1000); // Give time for backend to process login
-		await page.goto("http://localhost:3000/neueOrg");
+		await page.goto("http://localhost:3000/");
 
-		await page.waitForURL("http://localhost:3000/neueOrg", { timeout: 5000 });
+		await page.waitForURL("http://localhost:3000/", { timeout: 5000 });
 
 		// Save authentication state
 		await page.context().storageState({ path: authFile });
-		console.log("Authentication state saved:", authFile);
 	} catch (error) {
 		console.error("Authentication failed:", error);
 	}

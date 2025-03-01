@@ -1,5 +1,5 @@
 import type { TOrgCreateSchema, TOrgUpdateSchema } from "@/validators/orgs.schema";
-import { test, expect } from "@playwright/test";
+import { test, expect, type APIRequestContext } from "@playwright/test";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -32,8 +32,6 @@ test("Organization API Flow", async ({ request }) => {
 				"Content-Type": "application/json",
 			},
 		});
-
-		console.log(response);
 
 		expect(response.status()).toBe(201);
 		const body = await response.json();
@@ -69,5 +67,122 @@ test("Organization API Flow", async ({ request }) => {
 		expect(response.status()).toBe(202);
 		const body = await response.json();
 		expect(body.message).toBe("Organization deleted successfully");
+	});
+});
+
+test.describe("Organization API Edge Cases", () => {
+	// Cleanup helper function
+	async function cleanupOrg(request: APIRequestContext, slug: string) {
+		try {
+			await request.delete(`${BASE_URL}/${slug}`);
+		} catch (error) {
+			// Ignore cleanup errors
+		}
+	}
+
+	test("Should fail when creating organization with duplicate slug", async ({ request }) => {
+		const testSlug = "duplicate-slug-test";
+		try {
+			const duplicateOrg: TOrgCreateSchema = {
+				slug: testSlug,
+				name: "First Org",
+			};
+
+			// Create first organization
+			await request.post(BASE_URL, {
+				data: duplicateOrg,
+				headers: { "Content-Type": "application/json" },
+			});
+
+			// Attempt to create organization with same slug
+			const response = await request.post(BASE_URL, {
+				data: duplicateOrg,
+				headers: { "Content-Type": "application/json" },
+			});
+
+			expect(response.status()).toBe(400);
+			const body = await response.json();
+			expect(body.error).toBe("Organization with this slug already exists");
+		} finally {
+			// Cleanup after test
+			await cleanupOrg(request, testSlug);
+		}
+	});
+
+	test("Should fail when fetching non-existent organization", async ({ request }) => {
+		const response = await request.get(`${BASE_URL}/non-existent-org-${Date.now()}`);
+
+		expect(response.status()).toBe(404);
+		const body = await response.json();
+		expect(body.error).toBe("No organization with this slug");
+	});
+
+	test("Should fail when updating non-existent organization", async ({ request }) => {
+		const updateData: TOrgUpdateSchema = {
+			name: "Updated Name",
+		};
+
+		const response = await request.patch(`${BASE_URL}/non-existent-org-${Date.now()}`, {
+			data: updateData,
+			headers: { "Content-Type": "application/json" },
+		});
+
+		expect(response.status()).toBe(404);
+		const body = await response.json();
+		expect(body.error).toBe("No organization with this slug");
+	});
+
+	test("Should fail when creating organization with invalid data", async ({ request }) => {
+		const invalidOrg = {
+			slug: "", // Empty slug
+			name: "X".repeat(30), // Name too long (> 20 chars)
+		};
+
+		const response = await request.post(BASE_URL, {
+			data: invalidOrg,
+			headers: { "Content-Type": "application/json" },
+		});
+
+		expect(response.status()).toBe(400);
+		const body = await response.json();
+		expect(body.status).toBe("error");
+	});
+
+	test("Should fail when updating organization with invalid data", async ({ request }) => {
+		const testSlug = `test-${Date.now() % 1000}`;
+		try {
+			// First create a valid organization
+			const postResp = await request.post(BASE_URL, {
+				data: { slug: testSlug, name: "Test" },
+				headers: { "Content-Type": "application/json" },
+			});
+
+			expect(postResp.status()).toBe(201);
+
+			// Try to update with invalid data
+			const invalidUpdate = {
+				name: "X".repeat(30), // Name too long (> 20 chars)
+			};
+
+			const response = await request.patch(`${BASE_URL}/${testSlug}`, {
+				data: invalidUpdate,
+				headers: { "Content-Type": "application/json" },
+			});
+
+			expect(response.status()).toBe(400);
+			const body = await response.json();
+			expect(body.status).toBe("error");
+		} finally {
+			// Cleanup after test
+			await cleanupOrg(request, testSlug);
+		}
+	});
+
+	test("Should fail when deleting non-existent organization", async ({ request }) => {
+		const response = await request.delete(`${BASE_URL}/non-existent-org-${Date.now()}`);
+
+		expect(response.status()).toBe(404);
+		const body = await response.json();
+		expect(body.error).toBe("No organization with this slug");
 	});
 });
