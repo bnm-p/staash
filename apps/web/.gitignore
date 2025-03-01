@@ -8,6 +8,6 @@ node_modules
 /blob-report/
 /playwright/.cache/
 
-./src/tests/playwright/.auth
+./src/playwright/tests/.auth
 
   
