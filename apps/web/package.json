@@ -24,6 +24,7 @@
 		"@workspace/transactional": "workspace:*",
 		"@workspace/ui": "workspace:*",
 		"better-auth": "^1.1.18",
+		"dotenv": "^16.4.7",
 		"framer-motion": "^12.4.7",
 		"hono": "^4.7.1",
 		"lucide-react": "0.456.0",
