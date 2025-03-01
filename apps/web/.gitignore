@@ -8,6 +8,9 @@ node_modules
 /blob-report/
 /playwright/.cache/
 
-./src/playwright/tests/.auth/*
+# Playwright auth files
+src/playwright/tests/.auth/
+src/playwright/tests/.auth/*
+src/playwright/tests/.auth/user.json
 
   
