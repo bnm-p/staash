@@ -15,6 +15,7 @@ import { z } from "zod";
 import { toast } from "sonner";
 import { cn } from "@workspace/ui/lib/utils";
 import { client } from "@/lib/client";
+import { SlugInput } from "@workspace/ui/components/slug-input";
 
 interface ICreateSpaceModalProps extends React.ComponentProps<"div"> {}
 
@@ -84,9 +85,9 @@ export const CreateSpaceModal: FC<ICreateSpaceModalProps> = ({ className }) => {
 		<Dialog open={isModalOpen} onOpenChange={handleClose}>
 			<DialogContent className="overflow-hidden p-0">
 				<DialogHeader className="px-6 pt-8">
-					<DialogTitle className="text-center font-bold text-2xl">Costomize your server</DialogTitle>
+					<DialogTitle className="text-center font-bold text-2xl">Create Space</DialogTitle>
 					<DialogDescription className="text-center text-zinc-500">
-						Give your server a name and an icon. You can always change it later.
+						Give your space a name. You can always change it later.
 					</DialogDescription>
 				</DialogHeader>
 				<Form {...form}>
@@ -116,20 +117,7 @@ export const CreateSpaceModal: FC<ICreateSpaceModalProps> = ({ className }) => {
 								<FormItem className="px-8 py-6">
 									<FormLabel>Slug</FormLabel>
 									<FormControl className="flex items-stretch">
-										<div>
-											<div className="flex items-center border border-border border-r-0 bg-muted px-4 py-2 text-muted-foreground text-sm">
-												staash.app/{modalData?.org?.slug}/
-											</div>
-											<Input
-												type=""
-												placeholder="my-space"
-												{...field}
-												onChange={(e) => {
-													setAutoSlug(false);
-													field.onChange(e);
-												}}
-											/>
-										</div>
+										<SlugInput prefix={`staash.app/${modalData?.org?.slug}/`} placeholder="my-space" {...field} />
 									</FormControl>
 									<FormDescription>URL slug of your space</FormDescription>
 									<FormMessage />

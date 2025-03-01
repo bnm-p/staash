@@ -9,7 +9,11 @@ interface SlugInputProps extends React.ComponentProps<"input"> {
 const SlugInput = React.forwardRef<HTMLInputElement, SlugInputProps>(({ className, type, ...props }, ref) => {
 	return (
 		<label className={cn("flex", className)}>
-			<p className="flex items-center rounded-l-md border border-border bg-muted px-4 text-muted-foreground text-sm">
+			<p
+				className="relative flex max-w-[120px] items-center justify-end truncate rounded-l-md border border-border bg-muted px-4 text-right text-muted-foreground text-sm"
+				title={props.prefix}
+			>
+				<span className="absolute top-0 left-0 h-full w-4 bg-gradient-to-r from-muted to-transparent" />
 				{props.prefix}
 			</p>
 			<input
