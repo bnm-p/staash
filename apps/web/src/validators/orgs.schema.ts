@@ -6,7 +6,7 @@ export const orgCreateSchema = z.object({
 	logo: z.string().optional(),
 });
 
-export const orgUpdateSchmea = z.object({
+export const orgUpdateSchema = z.object({
 	name: z.string().min(1, "Name cannot be empty").max(20, "Name cannot be longer than 20 Characters").optional(),
 	slug: z.string().min(1, "Slug cannot be empty").max(20, "Name cannot be longer than 20 Characters").optional(),
 	logo: z.string().optional(),
@@ -22,6 +22,6 @@ export const orgSlugAndIdSchema = z.object({
 });
 
 export type TOrgCreateSchema = z.infer<typeof orgCreateSchema>;
-export type TOrgUpdateSchema = z.infer<typeof orgUpdateSchmea>;
+export type TOrgUpdateSchema = z.infer<typeof orgUpdateSchema>;
 export type TOrgSlugSchema = z.infer<typeof orgSlugSchema>;
 export type TOrgSlugAndId = z.infer<typeof orgSlugAndIdSchema>;
