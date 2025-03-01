@@ -4,16 +4,16 @@ import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import { usersService } from "@/queries/users.service";
 
-export interface IOrgSwitchProps extends React.ComponentProps<"button"> {}
+export interface IOrgSwitchProps extends Omit<React.ComponentProps<"button">, "ref"> {}
 
-export const OrgSwitch: FC<IOrgSwitchProps> = async ({ ...props }) => {
+export const OrgSwitch: FC<IOrgSwitchProps> = async (props) => {
 	const session = await auth.api.getSession({ headers: await headers() });
 
 	if (!session?.user) {
-		return;
+		return null;
 	}
 
 	const organizations = await usersService.getAllOrgsForCurrentUser(session?.user.id);
 
-	return <OrgSwitchClient {...props} organizations={organizations} />;
+	return <OrgSwitchClient organizations={organizations} {...props} />;
 };
