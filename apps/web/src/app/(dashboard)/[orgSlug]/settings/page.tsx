@@ -1,10 +1,9 @@
 import { ChangeOrgLogoCard } from "@/components/change-org-logo-card";
-import { SettingsCard } from "@/components/settings-card";
 import { orgsService } from "@/queries/orgs.service";
 
-import type { NextPage } from "next";
-import { orgSettings_name, orgSettings_slug } from "./schemas";
 import { SettingsDeleteCard } from "@/components/settings-delete-card";
+import type { NextPage } from "next";
+import { Cards } from "./cards";
 
 interface IOrganizationSettingsPageProps {
 	params: Promise<{ orgSlug: string }>;
@@ -25,20 +24,7 @@ const OrganizationSettingsPage: NextPage<IOrganizationSettingsPageProps> = async
 				</div>
 
 				<div className="space-y-8 pl-3">
-					<SettingsCard
-						label="Slug"
-						instanceKey="slug"
-						description="Url Segment of your org"
-						defaultValue={org.slug || ""}
-						schema={orgSettings_slug}
-					/>
-					<SettingsCard
-						label="Name"
-						instanceKey="name"
-						description="Name of your organization"
-						defaultValue={org.name || ""}
-						schema={orgSettings_name}
-					/>
+					<Cards org={org} />
 					<ChangeOrgLogoCard organization={org} />
 					<SettingsDeleteCard
 						label="Delete Organization"
