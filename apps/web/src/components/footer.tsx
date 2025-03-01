@@ -15,7 +15,7 @@ export const Footer: FC<IFooterProps> = ({ className, ...props }) => {
 						<span className="text-xs">All systems operational</span>
 					</span>
 				</div>
-				<div className="flex h-full items-center gap-x-8"></div>
+				<div className="flex h-full items-center gap-x-8" />
 			</div>
 		</footer>
 	);
