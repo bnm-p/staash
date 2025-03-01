@@ -29,6 +29,9 @@ model User {
 
   lastActiveOrgId String?
 
+  twoFactorEnabled Boolean?
+  twofactors       TwoFactor[]
+
   @@map("user")
 }
 
@@ -50,7 +53,7 @@ model Session {
 }
 
 model Account {
-  id                    String    @id
+  id                    String    @id @default(cuid())
   accountId             String
   providerId            String
   userId                String
@@ -62,8 +65,8 @@ model Account {
   refreshTokenExpiresAt DateTime?
   scope                 String?
   password              String?
-  createdAt             DateTime
-  updatedAt             DateTime
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
 
   @@map("account")
 }
@@ -155,4 +158,14 @@ model Variable {
   createdAt DateTime @default(now())
 
   @@map("variable")
+}
+
+model TwoFactor {
+  id          String @id
+  secret      String
+  backupCodes String
+  userId      String
+  user        User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("twoFactor")
 }

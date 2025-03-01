@@ -7,6 +7,9 @@
 	"scripts": {
 		"dev": "email dev -p 3001"
 	},
+	"exports": {
+		"./emails/*": "./emails/*.tsx"
+	},
 	"devDependencies": {
 		"react-email": "3.0.7",
 		"@types/react": "18.3.0",

@@ -1,11 +1,25 @@
-import { db } from "./db";
+import { StashVerifyEmail } from "@workspace/transactional/emails/confirm-email";
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
-import { customSession, organization } from "better-auth/plugins";
+import { emailOTP, organization } from "better-auth/plugins";
+import { db } from "./db";
+import { resend } from "./resend";
 
 export const auth = betterAuth({
 	database: prismaAdapter(db, { provider: "postgresql" }),
-	plugins: [organization()],
+	plugins: [
+		organization(),
+		emailOTP({
+			async sendVerificationOTP({ email, otp, type }) {
+				await resend.emails.send({
+					from: "onboarding@staash.app",
+					to: email,
+					subject: "Staash - Verify your email",
+					react: StashVerifyEmail({ validationCode: otp }),
+				});
+			},
+		}),
+	],
 	user: {
 		additionalFields: {
 			lastActiveOrgId: {
@@ -18,9 +32,6 @@ export const auth = betterAuth({
 	},
 	emailAndPassword: {
 		enabled: true,
-		async sendResetPassword(data, request) {
-			// Send an email to the user with a link to reset their password
-		},
 	},
 	appName: "Staash",
 	socialProviders: {

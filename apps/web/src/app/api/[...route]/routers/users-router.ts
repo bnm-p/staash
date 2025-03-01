@@ -1,5 +1,6 @@
 import { usersService } from "@/queries/users.service";
 import { orgSlugAndIdSchema } from "@/validators/orgs.schema";
+import { userCreateAccountSchema, userCreateSchema } from "@/validators/users.schema";
 import { zValidator } from "@/validators/validator-wrapper";
 import { Hono } from "hono";
 
@@ -17,4 +18,10 @@ export const userRouter = new Hono()
 	})
 	.get("/orgs", async (c) => {
 		return c.json(await usersService.getAllOrgsForCurrentUser((await usersService.getUser(c)).id));
+	})
+	.post("/", zValidator("json", userCreateSchema), async (c) => {
+		return c.json(await usersService.createUser(c.req.valid("json")));
+	})
+	.post("/account", zValidator("json", userCreateAccountSchema), async (c) => {
+		return c.json(await usersService.createAccount(c.req.valid("json")));
 	});

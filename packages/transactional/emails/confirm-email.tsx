@@ -1,20 +1,15 @@
-import { Html, Head, Body, Container, Text, Link, Section, Tailwind, Img } from "@react-email/components";
-import * as React from "react";
+import { Html, Head, Body, Container, Text, Link, Section, Tailwind } from "@react-email/components";
 
 interface StashVerifyEmailProps {
 	validationCode?: string;
 }
 
-export const StashVerifyEmail = ({ validationCode }: StashVerifyEmailProps) => (
+export const StashVerifyEmail = ({ validationCode = "xxxxxx" }: StashVerifyEmailProps) => (
 	<Html>
 		<Head />
 		<Tailwind>
 			<Body className="bg-white font-sans">
 				<Container className="mx-auto mt-5 max-w-md rounded border border-gray-200 bg-white p-10 shadow-md">
-					<div className="flex items-center justify-center gap-x-2">
-						{/*<Img src="url" alt="Staash Logo" width="46" height="22" />*/}
-					</div>
-
 					<Text className="text-center font-medium text-black text-lg">
 						Enter the following code to finish linking your account.
 					</Text>
@@ -35,9 +30,5 @@ export const StashVerifyEmail = ({ validationCode }: StashVerifyEmailProps) => (
 		</Tailwind>
 	</Html>
 );
-
-StashVerifyEmail.PreviewProps = {
-	validationCode: "123456",
-} as StashVerifyEmailProps;
 
 export default StashVerifyEmail;

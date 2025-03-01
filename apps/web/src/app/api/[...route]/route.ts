@@ -7,8 +7,6 @@ import { orgMiddleware } from "./middleware/org-middleware";
 import { userRouter } from "./routers/users-router";
 import { errorHandler } from "./middleware/error-middleware";
 
-export const runtime = "edge";
-
 declare module "hono" {
 	interface ContextVariableMap {
 		user: typeof auth.$Infer.Session.user | null;
