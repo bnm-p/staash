@@ -1,11 +1,11 @@
 import { Html, Head, Body, Container, Text, Link, Section, Tailwind, Img } from "@react-email/components";
 import * as React from "react";
 
-interface StashVerifyEmailProps {
+interface StaashVerifyEmailProps {
 	validationCode?: string;
 }
 
-export const StashVerifyEmail = ({ validationCode }: StashVerifyEmailProps) => (
+export const StaashVerifyEmail = ({ validationCode }: StaashVerifyEmailProps) => (
 	<Html>
 		<Head />
 		<Tailwind>
@@ -25,19 +25,19 @@ export const StashVerifyEmail = ({ validationCode }: StashVerifyEmailProps) => (
 					<Text className="text-center text-gray-700 text-sm">
 						Contact{" "}
 						<Link href="mailto:support@stash.com" className="underline">
-							support@stash.com
+							support@staash.com
 						</Link>{" "}
 						if you did not request this code.
 					</Text>
 				</Container>
-				<Text className="mt-5 text-center font-extrabold text-black text-xs uppercase">Securely powered by Stash.</Text>
+				<Text className="mt-5 text-center font-extrabold text-black text-xs uppercase">Securely powered by Staash.</Text>
 			</Body>
 		</Tailwind>
 	</Html>
 );
 
-StashVerifyEmail.PreviewProps = {
+StaashVerifyEmail.PreviewProps = {
 	validationCode: "123456",
-} as StashVerifyEmailProps;
+} as StaashVerifyEmailProps;
 
-export default StashVerifyEmail;
+export default StaashVerifyEmail;
