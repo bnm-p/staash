@@ -9,8 +9,8 @@ node_modules
 /playwright/.cache/
 
 # Playwright auth files
-src/playwright/tests/.auth/
-src/playwright/tests/.auth/*
-src/playwright/tests/.auth/user.json
+./src/playwright/tests/.auth/
+./src/playwright/tests/.auth/*
+./src/playwright/tests/.auth/user.json
 
   
