@@ -72,7 +72,7 @@ export const CreateSpaceModal: FC<ICreateSpaceModalProps> = ({ className }) => {
 			router.refresh();
 			form.reset();
 			onClose();
-			router.push(`/${modalData.org.slug}/${data.body.slug}`);
+			// router.push(`/${modalData.org.slug}/${data.body.slug}`);
 		} catch (error) {
 			console.error("Form submission error", error);
 			toast.error("Failed to submit the form. Please try again.");
