@@ -45,6 +45,7 @@ export const spacesService = {
 				data: {
 					name: data.name,
 					slug: data.slug,
+					icon: data.icon,
 					organizationId: data.orgId,
 				},
 			});

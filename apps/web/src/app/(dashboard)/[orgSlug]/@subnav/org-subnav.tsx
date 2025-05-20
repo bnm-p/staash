@@ -6,7 +6,7 @@ import { useParams, usePathname, useRouter } from "next/navigation";
 import { type FC, useEffect, useState } from "react";
 
 const tabs = [
-	{ path: "/", name: "Overview" },
+	{ path: "/", name: "Spaces" },
 	{ path: "/members", name: "Members" },
 	{ path: "/settings", name: "Settings" },
 ] as const;

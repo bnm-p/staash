@@ -132,6 +132,7 @@ model Space {
   slug           String
   createdAt      DateTime     @default(now())
   stages         Stage[]
+  icon           String       @default("default")
 
   @@unique([slug, organizationId])
   @@map("space")

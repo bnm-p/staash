@@ -148,7 +148,7 @@ export const SignInForm: FC<ISignInFormProps> = ({ className, ...props }) => {
 			<CardFooter className="flex w-full justify-center border-t py-4">
 				<p className="text-center text-muted-foreground text-xs">
 					Don&apos;t have an account?{" "}
-					<Link href="/auth/sign-up" className="text-foreground underline">
+					<Link href="/get-started" className="text-foreground underline">
 						Sign up
 					</Link>
 					.

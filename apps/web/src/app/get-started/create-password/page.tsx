@@ -99,7 +99,7 @@ const CreatePasswordPage: NextPage = () => {
 	return (
 		<div className="flex flex-col items-center gap-8 pt-24 text-center">
 			<div className="space-y-2.5">
-				<h1 className="font-bold text-2xl">Create a Password</h1>
+				<h1>Create a Password</h1>
 				<p className="text-lg text-muted-foreground">We&apos;ll use this password to sign in to your account.</p>
 			</div>
 			<Form {...form}>
