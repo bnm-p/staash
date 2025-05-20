@@ -7,7 +7,6 @@ import { zValidator } from "@/validators/validator-wrapper";
 
 export const spaceRouter = new Hono()
 	.post("/", zValidator("json", spaceCreateSchema), async (c) => {
-		console.log(c.req.valid("json"));
 		const space = await spacesService.createSpace(c.req.valid("json"));
 
 		return c.json({ message: "Sucessfully created space", body: space }, 201);

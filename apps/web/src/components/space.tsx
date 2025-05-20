@@ -30,7 +30,7 @@ export const Space: FC<ISpaceProps> = ({ variant, org, space }) => {
 							<div className="flex items-start justify-between">
 								<div className="flex items-center justify-between space-x-4 sm:justify-start sm:space-x-2">
 									<Logo name={space.icon} className="size-6" />
-									<h4 className="truncate font-medium text-neutral-900 text-sm dark:text-neutral-50">{space.name}</h4>
+									<h4 className="truncate font-medium text-sm">{space.name}</h4>
 								</div>
 								<div className="flex items-center gap-x-2">
 									<DropdownMenu>
@@ -89,7 +89,7 @@ export const Space: FC<ISpaceProps> = ({ variant, org, space }) => {
 							<div className="flex items-start justify-between">
 								<div className="flex items-center justify-between space-x-4 sm:justify-start sm:space-x-2">
 									<Logo name={space.icon} className="size-6" />
-									<h4 className="truncate font-medium text-neutral-900 text-sm dark:text-neutral-50">{space.name}</h4>
+									<h4 className="truncate font-medium text-sm">{space.name}</h4>
 								</div>
 								<div className="flex items-center gap-x-2">
 									<DropdownMenu>

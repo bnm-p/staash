@@ -35,7 +35,7 @@ export const OrgSlugClientPage: NextPage<IOrgSlugClientPageProps> = ({ spaces, o
 
 			const data = await res.json();
 
-			return data.map((space) => ({ ...space, createdAt: new Date(space.createdAt) }));
+			return data.map((space) => ({ ...space, createdAt: new Date(space.createdAt), updatedAt: new Date(space.updatedAt) }));
 		},
 		initialData: spaces,
 	});
