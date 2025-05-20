@@ -6,7 +6,10 @@
 		"build": "turbo build",
 		"dev": "turbo dev",
 		"lint": "turbo lint",
-		"format": "biome format --write ."
+		"format": "biome format --write .",
+		"db:push": "pnpm -F web db:push",
+		"db:generate": "pnpm -F web db:generate",
+		"auth:generate": "pnpm -F web auth:generate"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "1.9.4",
