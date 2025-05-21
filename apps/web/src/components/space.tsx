@@ -1,25 +1,16 @@
 "use client";
 
-import type { Organization, Space as TSpace } from "@prisma/client";
-import Link from "next/link";
-import type { FC } from "react";
-import { Logo } from "./icons";
-import { Button } from "@workspace/ui/components/button";
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@workspace/ui/components/dropdown-menu";
-import { EllipsisVertical, Edit2, Trash, Slash, SquareSlash } from "lucide-react";
-import { RelativeTime } from "./relative-time";
-import { Badge } from "@workspace/ui/components/badge";
-import { Card } from "@workspace/ui/components/card";
-import {
-	Dialog,
-	DialogContent,
-	DialogDescription,
-	DialogFooter,
-	DialogHeader,
-	DialogTitle,
-	DialogTrigger,
-} from "@workspace/ui/components/dialog";
+import { useDrawer } from "@/hooks/use-drawer";
 import { useModal } from "@/hooks/use-modal";
+import type { Organization, Space as TSpace } from "@prisma/client";
+import { Badge } from "@workspace/ui/components/badge";
+import { Button } from "@workspace/ui/components/button";
+import { Card } from "@workspace/ui/components/card";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@workspace/ui/components/dropdown-menu";
+import { Edit2, EllipsisVertical, SquareSlash } from "lucide-react";
+import { useCallback, type FC } from "react";
+import { Logo } from "./icons";
+import { RelativeTime } from "./relative-time";
 
 interface ISpaceProps {
 	variant: "grid" | "list";
@@ -28,11 +19,16 @@ interface ISpaceProps {
 }
 
 export const Space: FC<ISpaceProps> = ({ variant, org, space }) => {
-	const { onOpen } = useModal();
+	const modal = useModal();
+	const drawer = useDrawer();
 
-	const handleDelete = () => {
-		onOpen("delete-space", { org, space });
-	};
+	const handleDelete = useCallback(() => {
+		modal.onOpen("delete-space", { org, space });
+	}, [modal, org, space]);
+
+	const handleEdit = useCallback(() => {
+		drawer.onOpen("edit-space", { org, space });
+	}, [drawer, org, space]);
 
 	return (
 		<li key={`${space.id}-list`}>
@@ -53,7 +49,7 @@ export const Space: FC<ISpaceProps> = ({ variant, org, space }) => {
 											</Button>
 										</DropdownMenuTrigger>
 										<DropdownMenuContent align="end">
-											<DropdownMenuItem>
+											<DropdownMenuItem onClick={handleEdit}>
 												<Edit2 className="h-4 w-4" />
 												Edit
 											</DropdownMenuItem>
@@ -105,7 +101,7 @@ export const Space: FC<ISpaceProps> = ({ variant, org, space }) => {
 								</Button>
 							</DropdownMenuTrigger>
 							<DropdownMenuContent align="end">
-								<DropdownMenuItem>
+								<DropdownMenuItem onClick={handleEdit}>
 									<Edit2 className="h-4 w-4" />
 									Edit
 								</DropdownMenuItem>
