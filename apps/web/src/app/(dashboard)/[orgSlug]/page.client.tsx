@@ -12,26 +12,33 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { cn } from "@workspace/ui/lib/utils";
 import { AlignJustify, LayoutGrid, Plus } from "lucide-react";
 import type { NextPage } from "next";
-import { useState } from "react";
+import { use, useEffect, useRef, useState } from "react";
+import autoAnimate from "@formkit/auto-animate";
 
 interface IOrgSlugClientPageProps {
 	org: Organization;
-	spaces: TSpace[];
+	spacesPromise: Promise<TSpace[]>;
 }
 
-export const OrgSlugClientPage: NextPage<IOrgSlugClientPageProps> = ({ spaces, org }) => {
+export const OrgSlugClientPage: NextPage<IOrgSlugClientPageProps> = ({ spacesPromise, org }) => {
 	const { onOpen } = useModal();
+
+	const spaces = use(spacesPromise);
+	const list = useRef<HTMLUListElement>(null);
 
 	const [search, setSearch] = useState("");
 	const [view, setView] = useLocalStorageState<"grid" | "list">("spaces_view-list", "list");
 	const [sort, setSort] = useLocalStorageState<"newest" | "oldest" | "name" | "updated">("spaces_view-sort", "newest");
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: list dependency is necessary for auto-animate
+	useEffect(() => {
+		list.current && autoAnimate(list.current);
+	}, [list]);
+
 	const spacesQuery = useQuery<TSpace[]>({
-		queryKey: ["spaces"],
+		queryKey: ["org", org.slug, "spaces"],
 		queryFn: async () => {
-			const res = await client.api.orgs[":orgSlug"].spaces.$get({
-				param: { orgSlug: org.slug },
-			});
+			const res = await client.api.orgs[":orgSlug"].spaces.$get({ param: { orgSlug: org.slug } });
 
 			const data = await res.json();
 
@@ -112,7 +119,7 @@ export const OrgSlugClientPage: NextPage<IOrgSlugClientPageProps> = ({ spaces, o
 					</div>
 				</div>
 			) : (
-				<ul className={cn("", view === "grid" ? "grid grid-cols-2 gap-4 md:grid-cols-3" : "space-y-4")}>
+				<ul ref={list} className={cn("", view === "grid" ? "grid grid-cols-2 gap-4 md:grid-cols-3" : "space-y-4")}>
 					{spacesQuery.data.map((space) => (
 						<Space key={space.id} variant={view} org={org} space={space} />
 					))}

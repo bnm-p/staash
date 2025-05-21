@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import type { Space, Organization } from "@prisma/client";
 
-export type ModalType = "create-space" | "create-org" | "delete-org";
+export type ModalType = "create-space" | "create-org" | "delete-org" | "delete-space";
 
 interface ModalData {
 	org?: Partial<Organization>;

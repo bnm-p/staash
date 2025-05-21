@@ -10,6 +10,16 @@ import { EllipsisVertical, Edit2, Trash, Slash, SquareSlash } from "lucide-react
 import { RelativeTime } from "./relative-time";
 import { Badge } from "@workspace/ui/components/badge";
 import { Card } from "@workspace/ui/components/card";
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger,
+} from "@workspace/ui/components/dialog";
+import { useModal } from "@/hooks/use-modal";
 
 interface ISpaceProps {
 	variant: "grid" | "list";
@@ -18,12 +28,15 @@ interface ISpaceProps {
 }
 
 export const Space: FC<ISpaceProps> = ({ variant, org, space }) => {
-	const handleEdit = () => {};
-	const handleDelete = () => {};
+	const { onOpen } = useModal();
+
+	const handleDelete = () => {
+		onOpen("delete-space", { org, space });
+	};
 
 	return (
 		<li key={`${space.id}-list`}>
-			<Link href={`/${org.slug}/${space.slug}`}>
+			<div>
 				{variant === "grid" ? (
 					<Card className="bg-black p-2">
 						<div className="rounded-md border border-border bg-background p-4">
@@ -40,11 +53,11 @@ export const Space: FC<ISpaceProps> = ({ variant, org, space }) => {
 											</Button>
 										</DropdownMenuTrigger>
 										<DropdownMenuContent align="end">
-											<DropdownMenuItem onClick={handleEdit}>
+											<DropdownMenuItem>
 												<Edit2 className="h-4 w-4" />
 												Edit
 											</DropdownMenuItem>
-											<DropdownMenuItem onClick={handleDelete} className="!text-destructive hover:!bg-destructive/25">
+											<DropdownMenuItem onSelect={handleDelete} className="!text-destructive hover:!bg-destructive/25">
 												<SquareSlash className="h-4 w-4" />
 												Delete
 											</DropdownMenuItem>
@@ -84,31 +97,29 @@ export const Space: FC<ISpaceProps> = ({ variant, org, space }) => {
 						</div>
 					</Card>
 				) : (
-					<Card className="bg-black p-2">
+					<Card className="relative bg-black p-2">
+						<DropdownMenu>
+							<DropdownMenuTrigger asChild>
+								<Button variant="ghost" size="icon" className="absolute top-4 right-4">
+									<EllipsisVertical className="h-4 w-4" />
+								</Button>
+							</DropdownMenuTrigger>
+							<DropdownMenuContent align="end">
+								<DropdownMenuItem>
+									<Edit2 className="h-4 w-4" />
+									Edit
+								</DropdownMenuItem>
+								<DropdownMenuItem onSelect={handleDelete} className="!text-destructive hover:!bg-destructive/25">
+									<SquareSlash className="h-4 w-4" />
+									Delete
+								</DropdownMenuItem>
+							</DropdownMenuContent>
+						</DropdownMenu>
 						<div className="rounded-md border border-border bg-background p-4">
 							<div className="flex items-start justify-between">
 								<div className="flex items-center justify-between space-x-4 sm:justify-start sm:space-x-2">
 									<Logo name={space.icon} className="size-6" />
 									<h4 className="truncate font-medium text-sm">{space.name}</h4>
-								</div>
-								<div className="flex items-center gap-x-2">
-									<DropdownMenu>
-										<DropdownMenuTrigger asChild>
-											<Button variant="ghost" size="icon">
-												<EllipsisVertical className="h-4 w-4" />
-											</Button>
-										</DropdownMenuTrigger>
-										<DropdownMenuContent align="end">
-											<DropdownMenuItem onClick={handleEdit}>
-												<Edit2 className="h-4 w-4" />
-												Edit
-											</DropdownMenuItem>
-											<DropdownMenuItem onClick={handleDelete} className="!text-destructive hover:!bg-destructive/25">
-												<SquareSlash className="h-4 w-4" />
-												Delete
-											</DropdownMenuItem>
-										</DropdownMenuContent>
-									</DropdownMenu>
 								</div>
 							</div>
 
@@ -143,7 +154,7 @@ export const Space: FC<ISpaceProps> = ({ variant, org, space }) => {
 						</div>
 					</Card>
 				)}
-			</Link>
+			</div>
 		</li>
 	);
 };

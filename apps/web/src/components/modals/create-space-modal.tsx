@@ -17,6 +17,7 @@ import { cn } from "@workspace/ui/lib/utils";
 import { client } from "@/lib/client";
 import { SlugInput } from "@workspace/ui/components/slug-input";
 import { icons } from "../icons";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface ICreateSpaceModalProps extends React.ComponentProps<"div"> {}
 
@@ -30,6 +31,7 @@ export const CreateSpaceModal: FC<ICreateSpaceModalProps> = ({ className }) => {
 	const { isOpen, onClose, type, data: modalData } = useModal();
 	const isModalOpen = isOpen && type === "create-space";
 
+	const qc = useQueryClient();
 	const router = useRouter();
 	const [autoSlug, setAutoSlug] = useState(true);
 
@@ -70,9 +72,9 @@ export const CreateSpaceModal: FC<ICreateSpaceModalProps> = ({ className }) => {
 
 			toast.success("Space created");
 			router.refresh();
+			qc.invalidateQueries({ queryKey: ["org", modalData.org.slug, "spaces"] });
 			form.reset();
 			onClose();
-			// router.push(`/${modalData.org.slug}/${data.body.slug}`);
 		} catch (error) {
 			console.error("Form submission error", error);
 			toast.error("Failed to submit the form. Please try again.");

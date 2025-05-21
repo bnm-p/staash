@@ -12,11 +12,11 @@ const OrgSlugPage: NextPage<IOrgSlugPageProps> = async ({ params }) => {
 
 	const org = await orgsService.getOrgBySlug(orgSlug);
 
-	const spaces = await db.space.findMany({
+	const spacesPromise = db.space.findMany({
 		where: { organizationId: org.id },
 	});
 
-	return <OrgSlugClientPage spaces={spaces} org={org} />;
+	return <OrgSlugClientPage spacesPromise={spacesPromise} org={org} />;
 };
 
 export default OrgSlugPage;
