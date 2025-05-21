@@ -89,10 +89,8 @@ export const EditSpaceDrawer: FC<IEditSpaceDrawerProps> = () => {
 		<Drawer open={isDrawerOpen} onOpenChange={handleClose}>
 			<DrawerContent className="overflow-hidden p-0">
 				<DrawerHeader className="px-6 pt-8">
-					<DrawerTitle className="text-center font-bold text-2xl">Create Space</DrawerTitle>
-					<DrawerDescription className="text-center text-zinc-500">
-						Give your space a name. You can always change it later.
-					</DrawerDescription>
+					<DrawerTitle className="text-center font-bold text-2xl">Edit Space</DrawerTitle>
+					<DrawerDescription className="text-center text-zinc-500">Edit your space details.</DrawerDescription>
 				</DrawerHeader>
 				<Form {...form}>
 					<form

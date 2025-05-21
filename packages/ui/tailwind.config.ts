@@ -63,6 +63,10 @@ const config = {
 			},
 			animation: {
 				"caret-blink": "caret-blink 1.25s ease-out infinite",
+				hide: "hide 150ms cubic-bezier(0.16, 1, 0.3, 1)",
+				"dialog-overlay-show": "dialogOverlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);",
+				"drawer-slide-left-and-fade": "drawerSlideLeftAndFade 150ms cubic-bezier(0.16, 1, 0.3, 1)",
+				"drawer-slide-right-and-fade": "drawerSlideRightAndFade 150ms ease-in",
 			},
 		},
 	},

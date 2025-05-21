@@ -56,6 +56,47 @@
 		--chart-4: 280 65% 60%;
 		--chart-5: 340 75% 55%;
 	}
+
+	@keyframes hide {
+		from {
+			opacity: 1;
+		}
+		to {
+			opacity: 0;
+		}
+	}
+
+	@keyframes dialogOverlayShow {
+		from {
+			opacity: 0;
+		}
+		to {
+			opacity: 1;
+		}
+	}
+
+
+	@keyframes drawerSlideLeftAndFade {
+		from {
+			opacity: 0;
+			transform: translateX(100%);
+		}
+		to {
+			opacity: 1;
+			transform: translateX(0);
+		}
+	}
+
+	@keyframes drawerSlideRightAndFade {
+		from {
+			opacity: 1;
+			transform: translateX(0);
+		}
+		to {
+			opacity: 0;
+			transform: translateX(100%);
+		}
+	}
 }
 
 @layer base {
@@ -64,56 +105,5 @@
 	}
 	body {
 		@apply bg-background text-foreground;
-	}
-}
-
-h1 {
-	font-size: 2.5rem;
-	line-height: 1.2;
-}
-
-h2 {
-	font-size: 2rem;
-	line-height: 1.3;
-}
-
-h3 {
-	font-size: 1.75rem;
-	line-height: 1.3;
-	font-weight: 600;
-}
-
-h4 {
-	font-size: 1.5rem;
-	line-height: 1.4;
-	font-weight: 600;
-}
-
-h5 {
-	font-size: 1.25rem;
-	line-height: 1.4;
-	font-weight: 500;
-}
-
-h6 {
-	font-size: 1rem;
-	line-height: 1.5;
-	font-weight: 500;
-}
-
-.background-stripes {
-	background: repeating-linear-gradient(45deg, transparent, transparent 10px, hsl(var(--muted)) 10px, hsl(var(--muted)) 20px);
-}
-
-.background-stripes.animate {
-	animation: stripes 8s linear infinite;
-}
-
-@keyframes stripes {
-	0% {
-		background-position: 0 0;
-	}
-	100% {
-		background-position: 56px 0;
 	}
 }
