@@ -5,6 +5,7 @@ import { ThemeProvider as NextThemesProvider } from "next-themes";
 import type * as React from "react";
 import { Toaster } from "sonner";
 import ModalProvider from "./providers/modal-provider";
+import DrawerProvider from "./providers/drawer-provider";
 
 export function Providers({ children }: { children: React.ReactNode }) {
 	const queryClient = new QueryClient();
@@ -14,6 +15,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
 			<Toaster theme="dark" toastOptions={{ className: "rounded-none" }} />
 			<QueryClientProvider client={queryClient}>
 				<ModalProvider />
+				<DrawerProvider />
 				{children}
 			</QueryClientProvider>
 		</NextThemesProvider>
