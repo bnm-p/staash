@@ -1,6 +1,7 @@
 "use client";
 
 import { authClient, signIn } from "@/lib/auth-client";
+import { client } from "@/lib/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@workspace/ui/components/button";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@workspace/ui/components/form";
@@ -8,12 +9,10 @@ import { Input } from "@workspace/ui/components/input";
 import type { NextPage } from "next";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import type { z } from "zod";
 import { onboardingSchema } from "./schema";
 import { useOnboardingStore } from "./store";
-import { toast } from "sonner";
-import { auth } from "@/lib/auth";
-import { client } from "@/lib/client";
 
 const onboardingEmailSchema = onboardingSchema.pick({
 	email: true,
@@ -57,7 +56,7 @@ const GetStartedPage: NextPage = () => {
 	return (
 		<div className="flex flex-col items-center gap-8 pt-24 text-center">
 			<div className="space-y-2.5">
-				<h1 className="bold">First enter your Email</h1>
+				<h1>First enter your Email</h1>
 				<p className="text-lg text-muted-foreground">we suggest using your work email</p>
 			</div>
 			<Form {...form}>

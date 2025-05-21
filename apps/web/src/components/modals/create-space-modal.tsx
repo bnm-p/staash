@@ -16,12 +16,14 @@ import { toast } from "sonner";
 import { cn } from "@workspace/ui/lib/utils";
 import { client } from "@/lib/client";
 import { SlugInput } from "@workspace/ui/components/slug-input";
+import { icons } from "../icons";
 
 interface ICreateSpaceModalProps extends React.ComponentProps<"div"> {}
 
 const formSchema = z.object({
 	name: z.string(),
 	slug: z.string(),
+	icon: z.string(),
 });
 
 export const CreateSpaceModal: FC<ICreateSpaceModalProps> = ({ className }) => {
@@ -36,6 +38,7 @@ export const CreateSpaceModal: FC<ICreateSpaceModalProps> = ({ className }) => {
 		defaultValues: {
 			name: "",
 			slug: "",
+			icon: "",
 		},
 	});
 
@@ -69,7 +72,7 @@ export const CreateSpaceModal: FC<ICreateSpaceModalProps> = ({ className }) => {
 			router.refresh();
 			form.reset();
 			onClose();
-			router.push(`/${modalData.org.slug}/${data.body.slug}`);
+			// router.push(`/${modalData.org.slug}/${data.body.slug}`);
 		} catch (error) {
 			console.error("Form submission error", error);
 			toast.error("Failed to submit the form. Please try again.");
@@ -120,6 +123,31 @@ export const CreateSpaceModal: FC<ICreateSpaceModalProps> = ({ className }) => {
 										<SlugInput prefix={`staash.app/${modalData?.org?.slug}/`} placeholder="my-space" {...field} />
 									</FormControl>
 									<FormDescription>URL slug of your space</FormDescription>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+
+						<FormField
+							control={form.control}
+							name="icon"
+							render={({ field }) => (
+								<FormItem className="px-8 py-6">
+									<FormLabel>Icon</FormLabel>
+									<FormControl className="flex items-stretch">
+										<div className="grid grid-cols-8 gap-4">
+											{Object.entries(icons.logos).map(([key, Icon]) => (
+												<Button
+													key={key}
+													type="button"
+													onClick={() => field.onChange(key)}
+													variant={field.value === key ? "outline" : "ghost"}
+												>
+													<Icon />
+												</Button>
+											))}
+										</div>
+									</FormControl>
 									<FormMessage />
 								</FormItem>
 							)}
