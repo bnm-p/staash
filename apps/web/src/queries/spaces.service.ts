@@ -57,7 +57,7 @@ export const spacesService = {
 		} catch (error: unknown) {
 			if (error instanceof Prisma.PrismaClientKnownRequestError) {
 				if (error.code === "P2002") {
-					throw new HTTPException(400, { message: "Space with this slug already exists in this Organisation." });
+					throw new HTTPException(400, { message: "Space with this slug already exists in this Organization." });
 				}
 			}
 			return errorService.handleServiceError("Error while creating Space", error);
