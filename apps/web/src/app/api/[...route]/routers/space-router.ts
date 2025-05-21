@@ -9,7 +9,7 @@ export const spaceRouter = new Hono()
 	.post("/", zValidator("json", spaceCreateSchema), async (c) => {
 		const space = await spacesService.createSpace(c.req.valid("json"));
 
-		return c.json({ message: "Sucessfully created space", body: space }, 201);
+		return c.json({ message: "Successfully created space", body: space }, 201);
 	})
 	.get("/", zValidator("param", orgSlugSchema), async (c) => {
 		return c.json(await spacesService.getAllSpacesByOrgSlug(c.req.valid("param")));
