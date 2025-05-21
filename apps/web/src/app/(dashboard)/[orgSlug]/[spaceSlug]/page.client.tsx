@@ -6,6 +6,7 @@ import { Logo } from "@/components/icons";
 import { RelativeTime } from "@/components/relative-time";
 import { Badge } from "@workspace/ui/components/badge";
 import { VariableManager } from "@/components/variable-manager";
+import { AuditLog } from "@/components/audit-log";
 
 interface ISpaceSlugClientPageProps {
 	org: Organization;
@@ -62,8 +63,72 @@ export const SpaceSlugClientPage: FC<ISpaceSlugClientPageProps> = ({ org, space 
 					</p>
 				</div>
 			</div>
-			<div className="mt-12">
-				<VariableManager />
+			<div className="mt-12 flex gap-x-8">
+				<div className="h-fit w-full">
+					<VariableManager />
+				</div>
+				<div className="h-fit w-full">
+					<AuditLog
+						logs={[
+							{
+								id: "1",
+								type: "VARIABLE_UPDATED",
+								actor: "Alice",
+								description: "updated `STRIPE_SECRET_KEY` in `production`",
+								timestamp: "2025-05-21T12:30:00Z",
+							},
+							{
+								id: "2",
+								type: "USER_INVITED",
+								actor: "Bob",
+								description: "invited `carol@example.com` to the space",
+								timestamp: "2025-05-20T09:15:00Z",
+							},
+							{
+								id: "3",
+								type: "STAGE_CREATED",
+								actor: "Alice",
+								description: "created `staging` stage",
+								timestamp: "2025-05-19T14:45:00Z",
+							},
+							{
+								id: "4",
+								type: "VARIABLE_UPDATED",
+								actor: "Alice",
+								description: "updated `STRIPE_SECRET_KEY` in `production`",
+								timestamp: "2025-05-18T12:30:00Z",
+							},
+							{
+								id: "5",
+								type: "USER_INVITED",
+								actor: "Bob",
+								description: "invited `carol@example.com` to the space",
+								timestamp: "2025-05-17T09:15:00Z",
+							},
+							{
+								id: "6",
+								type: "STAGE_CREATED",
+								actor: "Alice",
+								description: "created `staging` stage",
+								timestamp: "2025-05-16T14:45:00Z",
+							},
+							{
+								id: "7",
+								type: "VARIABLE_UPDATED",
+								actor: "Alice",
+								description: "updated `STRIPE_SECRET_KEY` in `production`",
+								timestamp: "2025-05-15T12:30:00Z",
+							},
+							{
+								id: "8",
+								type: "USER_INVITED",
+								actor: "Bob",
+								description: "invited `carol@example.com` to the space",
+								timestamp: "2025-05-14T09:15:00Z",
+							},
+						]}
+					/>
+				</div>
 			</div>
 		</div>
 	);
