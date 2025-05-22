@@ -71,9 +71,8 @@ export const CreateSpaceModal: FC<ICreateSpaceModalProps> = ({ className }) => {
 			const data = await res.json();
 
 			toast.success("Space created");
-			router.refresh();
-			qc.invalidateQueries({ queryKey: ["org", modalData.org.slug, "spaces"] });
 			form.reset();
+			qc.invalidateQueries({ queryKey: ["org", modalData.org.slug, "spaces"] });
 			onClose();
 		} catch (error) {
 			console.error("Form submission error", error);

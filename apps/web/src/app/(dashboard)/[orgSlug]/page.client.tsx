@@ -1,39 +1,27 @@
 "use client";
 
+import { QueryHandler } from "@/components/query-handler";
 import { Space } from "@/components/space";
-import { useLocalStorageState } from "@/hooks/use-local-storage-state";
+import { EmptyState } from "@/components/states/empty";
+import { ErrorState } from "@/components/states/error";
 import { useModal } from "@/hooks/use-modal";
 import { client } from "@/lib/client";
 import type { Organization, Space as TSpace } from "@prisma/client";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@workspace/ui/components/button";
-import { Input } from "@workspace/ui/components/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@workspace/ui/components/select";
-import { cn } from "@workspace/ui/lib/utils";
-import { AlignJustify, LayoutGrid, Plus } from "lucide-react";
+import { Skeleton } from "@workspace/ui/components/skeleton";
+import { Plus } from "lucide-react";
 import type { NextPage } from "next";
-import { use, useEffect, useRef, useState } from "react";
-import autoAnimate from "@formkit/auto-animate";
+import { use } from "react";
 
 interface IOrgSlugClientPageProps {
-	org: Organization;
-	spacesPromise: Promise<TSpace[]>;
+	orgPromise: Promise<Organization>;
 }
 
-export const OrgSlugClientPage: NextPage<IOrgSlugClientPageProps> = ({ spacesPromise, org }) => {
+export const OrgSlugClientPage: NextPage<IOrgSlugClientPageProps> = ({ orgPromise }) => {
+	const org = use(orgPromise);
+
 	const { onOpen } = useModal();
-
-	const spaces = use(spacesPromise);
-	const list = useRef<HTMLUListElement>(null);
-
-	const [search, setSearch] = useState("");
-	const [view, setView] = useLocalStorageState<"grid" | "list">("spaces_view-list", "list");
-	const [sort, setSort] = useLocalStorageState<"newest" | "oldest" | "name" | "updated">("spaces_view-sort", "newest");
-
-	// biome-ignore lint/correctness/useExhaustiveDependencies: list dependency is necessary for auto-animate
-	useEffect(() => {
-		list.current && autoAnimate(list.current);
-	}, [list]);
 
 	const spacesQuery = useQuery<TSpace[]>({
 		queryKey: ["org", org.slug, "spaces"],
@@ -44,7 +32,7 @@ export const OrgSlugClientPage: NextPage<IOrgSlugClientPageProps> = ({ spacesPro
 
 			return data.map((space) => ({ ...space, createdAt: new Date(space.createdAt), updatedAt: new Date(space.updatedAt) }));
 		},
-		initialData: spaces,
+		enabled: !!org.slug,
 	});
 
 	return (
@@ -55,76 +43,51 @@ export const OrgSlugClientPage: NextPage<IOrgSlugClientPageProps> = ({ spacesPro
 					Create Space <Plus />
 				</Button>
 			</div>
-			<div className="flex items-center gap-x-4">
-				<div className="flex-grow">
-					<Input type="text" placeholder="Search spaces..." value={search} onChange={(e) => setSearch(e.target.value)} />
-				</div>
-				<div className="flex items-stretch">
-					<Button
-						variant={view === "grid" ? "default" : "outline"}
-						className="rounded-r-none"
-						onClick={() => {
-							setView("grid");
-						}}
-					>
-						<LayoutGrid />
-					</Button>
-					<Button
-						variant={view === "list" ? "default" : "outline"}
-						className="rounded-l-none border-l-none"
-						onClick={() => {
-							setView("list");
-						}}
-					>
-						<AlignJustify />
-					</Button>
-				</div>
-				<div>
-					<Select defaultValue={sort} onValueChange={(value) => setSort(value as "newest" | "oldest" | "name" | "updated")}>
-						<SelectTrigger className="w-[180px]">
-							<SelectValue placeholder="Sort by" />
-						</SelectTrigger>
-						<SelectContent>
-							<SelectItem value="newest">Newest</SelectItem>
-							<SelectItem value="oldest">Oldest</SelectItem>
-							<SelectItem value="name">Name</SelectItem>
-							<SelectItem value="updated">Updated</SelectItem>
-						</SelectContent>
-					</Select>
-				</div>
-			</div>
-			{spacesQuery.data.length === 0 ? (
-				<div className="relative">
-					<ul className="mt-8 space-y-2">
-						<li className="rounded-md bg-muted px-6 py-3">
-							<div className="size-8" />
+			<QueryHandler
+				query={spacesQuery}
+				render={({ data }) => (
+					<ul className="grid grid-cols-2 gap-4 md:grid-cols-2">
+						{data.map((space) => (
+							<Space key={space.id} variant={"grid"} org={org} space={space} />
+						))}
+					</ul>
+				)}
+				loading={() => (
+					<ul className="grid grid-cols-2 gap-4 md:grid-cols-2">
+						<li className="h-[210px] rounded-xl border border-border p-2">
+							<Skeleton className="h-[128px] rounded-lg" />
 						</li>
-						<li className="rounded-md bg-muted px-6 py-3">
-							<div className="size-8" />
+						<li className="h-[210px] rounded-xl border border-border p-2">
+							<Skeleton className="h-[128px] rounded-lg" />
 						</li>
-						<li className="rounded-md bg-muted px-6 py-3">
-							<div className="size-8" />
+						<li className="h-[210px] rounded-xl border border-border p-2">
+							<Skeleton className="h-[128px] rounded-lg" />
 						</li>
-						<li className="rounded-md bg-muted px-6 py-3">
-							<div className="size-8" />
+						<li className="h-[210px] rounded-xl border border-border p-2">
+							<Skeleton className="h-[128px] rounded-lg" />
 						</li>
 					</ul>
-					<div className="absolute inset-x-0 bottom-0 flex flex-col items-center justify-center bg-gradient-to-b from-transparent to-black py-12">
-						<p className="font-medium">No spaces created yet</p>
-						<p className="mt-2 text-muted-foreground text-sm">Create your first space to get started</p>
+				)}
+				error={() => (
+					<ErrorState
+						title="Error fetching spaces"
+						description={"Something went wrong while fetching spaces."}
+						containerClassName="w-full"
+					>
+						<Button variant="outline" onClick={() => spacesQuery.refetch()}>
+							Reload
+						</Button>
+					</ErrorState>
+				)}
+				empty={() => (
+					<EmptyState title="No spaces created yet" description="You haven't created any spaces yet." containerClassName="w-full">
 						<Button className="mt-6 gap-1" onClick={() => onOpen("create-space", { org })}>
 							<Plus className="-ml-1 size-5 shrink-0" aria-hidden={true} />
 							Create Space
 						</Button>
-					</div>
-				</div>
-			) : (
-				<ul ref={list} className={cn("", view === "grid" ? "grid grid-cols-2 gap-4 md:grid-cols-3" : "space-y-4")}>
-					{spacesQuery.data.map((space) => (
-						<Space key={space.id} variant={view} org={org} space={space} />
-					))}
-				</ul>
-			)}
+					</EmptyState>
+				)}
+			/>
 		</div>
 	);
 };

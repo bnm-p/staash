@@ -5,9 +5,9 @@ import { client } from "@/lib/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@workspace/ui/components/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@workspace/ui/components/dialog";
-import { useRouter } from "next/navigation";
 
 import { useState, type FC } from "react";
+import { toast } from "sonner";
 
 interface IDeleteSpaceModalProps extends React.ComponentProps<"div"> {}
 
@@ -15,7 +15,6 @@ export const DeleteSpaceModal: FC<IDeleteSpaceModalProps> = ({ className }) => {
 	const { isOpen, onClose, type, data: modalData } = useModal();
 	const qc = useQueryClient();
 	const [isSubmitting, setIsSubmitting] = useState(false);
-	const router = useRouter();
 
 	const isModalOpen = isOpen && type === "delete-space";
 
@@ -34,7 +33,7 @@ export const DeleteSpaceModal: FC<IDeleteSpaceModalProps> = ({ className }) => {
 				},
 			});
 
-			router.refresh();
+			toast.success("Space deleted");
 			qc.invalidateQueries({ queryKey: ["org", modalData.org.slug, "spaces"] });
 			onClose();
 		} catch (error) {
