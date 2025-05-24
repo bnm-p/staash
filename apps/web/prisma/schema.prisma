@@ -133,6 +133,7 @@ model Space {
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
   stages         Stage[]
+  variables      Variable[]
   icon           String       @default("default")
 
   @@unique([slug, organizationId])
@@ -156,7 +157,8 @@ model Variable {
   type      String
   value     String
   spaceId   String
-  stage     Stage    @relation(fields: [spaceId], references: [id], onDelete: Cascade)
+  space     Space      @relation(fields: [spaceId], references: [id], onDelete: Cascade)
+  stage     Stage[]    
   createdAt DateTime @default(now())
 
   @@map("variable")

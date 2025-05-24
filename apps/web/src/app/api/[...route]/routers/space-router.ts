@@ -4,8 +4,10 @@ import { orgAndSpaceSlug, spaceCreateSchema, spaceUpdateSchema } from "@/validat
 import { orgSlugSchema } from "@/validators/orgs.schema";
 import { usersService } from "@/queries/users.service";
 import { zValidator } from "@/validators/validator-wrapper";
+import { variablesRouter } from "./variables-router";
 
 export const spaceRouter = new Hono()
+	.route("/:spaceSlug/variables", variablesRouter)
 	.post("/", zValidator("json", spaceCreateSchema), async (c) => {
 		const space = await spacesService.createSpace(c.req.valid("json"));
 

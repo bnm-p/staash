@@ -8,6 +8,7 @@
 		"lint": "turbo lint",
 		"format": "biome format --write .",
 		"db:push": "pnpm -F web db:push",
+		"db:studio": "pnpm -F web db:studio",
 		"db:generate": "pnpm -F web db:generate",
 		"auth:generate": "pnpm -F web auth:generate"
 	},
