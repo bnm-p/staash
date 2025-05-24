@@ -1,4 +1,4 @@
-import { ValidationException } from "@/errors/ValidationError";
+import { ValidationException } from "@/errors/validation.exception";
 import type { Context, Next } from "hono";
 import { HTTPException } from "hono/http-exception";
 import { z } from "zod";

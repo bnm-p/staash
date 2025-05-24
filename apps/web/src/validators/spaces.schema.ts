@@ -1,15 +1,15 @@
 import { z } from "zod";
 
 export const spaceCreateSchema = z.object({
-	name: z.string().min(1, "Name cannot be empty"),
-	slug: z.string().min(1, "Slug cannot be empty"),
+	name: z.string().nonempty(),
+	slug: z.string().nonempty(),
 	icon: z.string().optional(),
 	orgId: z.string(),
 });
 
 export const spaceUpdateSchema = z.object({
-	name: z.string().min(1, "Name cannot be empty").optional(),
-	slug: z.string().min(1, "Slug cannot be empty").optional(),
+	name: z.string().optional(),
+	slug: z.string().optional(),
 });
 
 export const orgAndSpaceSlug = z.object({
