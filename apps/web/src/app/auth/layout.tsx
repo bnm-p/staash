@@ -1,32 +1,18 @@
-import { Logo } from "@/components/logo";
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
+import Aurora from "@/components/aurora";
 
-export default async function DashboardLayout({
+export default async function AuthLayout({
 	children,
 }: Readonly<{
 	children: React.ReactNode;
 }>) {
-	const session = await auth.api.getSession({ headers: await headers() });
-
-	if (session) {
-		redirect("/");
-	}
-
 	return (
-		<div>
-			<div className="flex h-14 border-border border-b">
-				<div className="w-72 border-border border-r" />
-				<div className="flex flex-grow items-center justify-center px-4">
-					<Logo />
-				</div>
-				<div className="w-72 border-border border-l" />
+		<div className="relative">
+			<div className="absolute inset-0">
+				<div className="absolute inset-0 bg-gradient-to-r from-black to-transparent" />
+				<Aurora colorStops={["#65a30d", "#a3e635", "#365314"]} speed={0.25} />
 			</div>
-			<div className="flex min-h-[calc(100svh-3.5rem)] border-border border-b">
-				<div className="w-72 border-border border-r" />
-				<main className="flex-grow px-4 pt-12">{children}</main>
-				<div className="w-72 border-border border-l" />
+			<div className="relative flex min-h-screen">
+				<main className="container">{children}</main>
 			</div>
 		</div>
 	);

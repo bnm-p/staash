@@ -49,3 +49,13 @@ export const hasErrorInput = [
 	// ring color
 	"ring-red-200 dark:ring-red-700/30",
 ];
+
+export function getApiErrorMessage(error: unknown): string {
+	if (!error) return "An unknown error occurred";
+	if (typeof error === "string") return error;
+	if (error instanceof Error) return error.message;
+	if (typeof error === "object" && error !== null && "message" in error) {
+		return String((error as any).message);
+	}
+	return "An unexpected error occurred";
+}

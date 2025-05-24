@@ -1,17 +1,15 @@
 "use client";
 
+import { signUp } from "@/lib/auth-client";
 import { Button } from "@workspace/ui/components/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@workspace/ui/components/card";
 import { Input } from "@workspace/ui/components/input";
 import { Label } from "@workspace/ui/components/label";
-import { type FC, useState } from "react";
-import Image from "next/image";
 import { Loader2, X } from "lucide-react";
-import { signUp } from "@/lib/auth-client";
-import { toast } from "sonner";
-import { useRouter } from "next/navigation";
-import { cn } from "@workspace/ui/lib/utils";
+import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { type FC, useState } from "react";
+import { toast } from "sonner";
 
 interface ISignUpFormProps extends React.ComponentProps<"div"> {}
 
@@ -26,6 +24,39 @@ export const SignUpForm: FC<ISignUpFormProps> = ({ className, ...props }) => {
 	const router = useRouter();
 	const [loading, setLoading] = useState(false);
 
+	const handleSignUp = async (e: React.FormEvent) => {
+		e.preventDefault();
+		setLoading(true);
+
+		try {
+			await signUp.email({
+				email,
+				password,
+				name: `${firstName} ${lastName}`,
+				image: image ? await convertImageToBase64(image) : "",
+				callbackURL: "/",
+				fetchOptions: {
+					onResponse: () => {
+						setLoading(false);
+					},
+					onRequest: () => {
+						setLoading(true);
+					},
+					onError: (ctx) => {
+						toast.error(ctx.error.message);
+					},
+					onSuccess: async () => {
+						router.push("/");
+					},
+				},
+			});
+		} catch (error) {
+			toast.error("Failed to sign up");
+		} finally {
+			setLoading(false);
+		}
+	};
+
 	const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const file = e.target.files?.[0];
 		if (file) {
@@ -39,14 +70,10 @@ export const SignUpForm: FC<ISignUpFormProps> = ({ className, ...props }) => {
 	};
 
 	return (
-		<Card className={cn("z-50 max-w-md rounded-md rounded-t-none", className)} {...props}>
-			<CardHeader>
-				<CardTitle className="text-lg md:text-xl">Sign Up</CardTitle>
-				<CardDescription className="text-xs md:text-sm">Enter your information to create an account</CardDescription>
-			</CardHeader>
-			<CardContent>
-				<div className="grid gap-4">
-					<div className="grid grid-cols-2 gap-4">
+		<div>
+			<form onSubmit={handleSignUp}>
+				<fieldset disabled={loading} className="space-y-8">
+					<div className="grid grid-cols-2 gap-8">
 						<div className="grid gap-2">
 							<Label htmlFor="first-name">First name</Label>
 							<Input
@@ -129,48 +156,19 @@ export const SignUpForm: FC<ISignUpFormProps> = ({ className, ...props }) => {
 							</div>
 						</div>
 					</div>
-					<Button
-						type="submit"
-						className="w-full"
-						disabled={loading}
-						onClick={async () => {
-							await signUp.email({
-								email,
-								password,
-								name: `${firstName} ${lastName}`,
-								image: image ? await convertImageToBase64(image) : "",
-								callbackURL: "/",
-								fetchOptions: {
-									onResponse: () => {
-										setLoading(false);
-									},
-									onRequest: () => {
-										setLoading(true);
-									},
-									onError: (ctx) => {
-										toast.error(ctx.error.message);
-									},
-									onSuccess: async () => {
-										router.push("/");
-									},
-								},
-							});
-						}}
-					>
+					<Button type="submit" className="w-full">
 						{loading ? <Loader2 size={16} className="animate-spin" /> : "Create an account"}
 					</Button>
-				</div>
-			</CardContent>
-			<CardFooter className="flex w-full justify-center border-t py-4">
-				<p className="text-center text-muted-foreground text-xs">
-					Already have an account?{" "}
-					<Link href="/auth/sign-in" className="text-foreground underline">
-						Sign in
-					</Link>
-					.
-				</p>
-			</CardFooter>
-		</Card>
+				</fieldset>
+			</form>
+			<p className="mt-8 text-muted-foreground text-xs">
+				Already got an account?{" "}
+				<Link href="/auth/sign-in" className="text-foreground underline">
+					Sign in
+				</Link>
+				.
+			</p>
+		</div>
 	);
 };
 
