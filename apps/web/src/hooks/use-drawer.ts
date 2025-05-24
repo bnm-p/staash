@@ -1,25 +1,25 @@
 import { create } from "zustand";
 import type { Space, Organization } from "@prisma/client";
 
-export type ModalType = "create-space" | "create-org" | "delete-org" | "delete-space";
+export type DrawerType = "edit-space";
 
-interface ModalData {
+interface DrawerData {
 	org?: Partial<Organization>;
-	space?: Space;
+	space?: Partial<Space>;
 	apiUrl?: string;
 	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	query?: Record<string, any>;
 }
 
-interface ModalStore {
-	type: ModalType | null;
-	data: ModalData;
+interface DrawerStore {
+	type: DrawerType | null;
+	data: DrawerData;
 	isOpen: boolean;
-	onOpen: (type: ModalType, data?: ModalData) => void;
+	onOpen: (type: DrawerType, data?: DrawerData) => void;
 	onClose: () => void;
 }
 
-export const useModal = create<ModalStore>((set) => ({
+export const useDrawer = create<DrawerStore>((set) => ({
 	type: null,
 	data: {},
 	isOpen: false,

@@ -3,6 +3,7 @@ import { Logo } from "./logo";
 import { OrgSwitch } from "./org-switch";
 import { UserProfile } from "./user-profile";
 import Link from "next/link";
+import { OrgSpaceSwitcher } from "./org-space-switcher";
 
 interface NavProps {
 	showOrgSwitch?: boolean;
@@ -19,6 +20,7 @@ export const Nav: FC<NavProps> = ({ showOrgSwitch = true }) => {
 					<>
 						<span className="h-6 w-px rotate-12 bg-border" />
 						<OrgSwitch />
+						{/* <OrgSpaceSwitcher /> */}
 					</>
 				)}
 			</div>

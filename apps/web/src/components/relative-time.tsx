@@ -3,7 +3,7 @@
 import { useEffect, useState, type FC } from "react";
 
 interface IRelativeTimeProps {
-	date: Date;
+	date: Date | string;
 	locale?: string;
 }
 

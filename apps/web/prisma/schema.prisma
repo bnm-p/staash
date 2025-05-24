@@ -145,8 +145,8 @@ model Stage {
   name      String
   spaceId   String
   space     Space      @relation(fields: [spaceId], references: [id], onDelete: Cascade)
+  variables      Variable[]
   createdAt DateTime   @default(now())
-  variables Variable[]
 
   @@map("stage")
 }
