@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-export class AES256GCM {
+class AES256GCM {
 	public algorithm = "aes-256-gcm" as const;
 	public encryption_key: string;
 	public IV_LENGTH = 12;
@@ -52,3 +52,5 @@ export class AES256GCM {
 		return decrypted.toString("utf8");
 	}
 }
+
+export const AES = new AES256GCM();

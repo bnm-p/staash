@@ -2,19 +2,13 @@ import { db } from "@/lib/db";
 import { errorService } from "./error.service";
 import type { TOrgAndSpaceSlug } from "@/validators/spaces.schema";
 import { spacesService } from "./spaces.service";
-import { AES256GCM } from "@/encrypting/AES256GCM";
+import type { TVariableCreateSchema, TVariableIdSchema, TVariableUpdateSchema } from "@/validators/variables.schema";
+import { HTTPException } from "hono/http-exception";
+import { AES } from "@/encrypting/AES256GCM";
 
 export const variablesService = {
 	getAllVariablesBySpaceAndOrgSlug: async ({ orgSlug, spaceSlug }: TOrgAndSpaceSlug) => {
 		try {
-			const AES = new AES256GCM();
-			const text = "Hello, World! This is AES-256 GCM with Node.js!";
-
-			const encrypted = AES.encrypt(text);
-
-			const decrypted = AES.decrypt(encrypted);
-			console.log(decrypted);
-
 			const space = await spacesService.getSpaceBySpaceSlugAndOrgSlug(spaceSlug, orgSlug);
 
 			const variables = await db.variable.findMany({
@@ -24,6 +18,53 @@ export const variablesService = {
 			return variables;
 		} catch (error: unknown) {
 			return errorService.handleServiceError("Error while trying to fetch Variables", error);
+		}
+	},
+	createVariable: async (data: TVariableCreateSchema) => {
+		try {
+			const variable = await db.variable.create({
+				data: {
+					name: data.name,
+					value: AES.encrypt(data.value),
+					spaceId: data.spaceId,
+					type: "", //TODO Remove from DB schema
+				},
+			});
+
+			if (!variable) {
+				throw new HTTPException(500, { message: "Failed to create variable" });
+			}
+		} catch (error: unknown) {
+			return errorService.handleServiceError("Error while trying to create Variable", error);
+		}
+	},
+	updateVariable: async ({ variableId }: TVariableIdSchema, data: TVariableUpdateSchema) => {
+		const cleanData = Object.fromEntries(Object.entries(data).filter(([_, value]) => value !== undefined));
+
+		const updatedVariable = await db.variable.update({
+			where: {
+				id: variableId,
+			},
+			data: {
+				...cleanData,
+			},
+		});
+
+		return updatedVariable;
+	},
+	deleteVariable: async ({ variableId }: TVariableIdSchema) => {
+		try {
+			const deletedVariable = await db.variable.delete({
+				where: { id: variableId },
+			});
+
+			if (!deletedVariable) {
+				throw new HTTPException(500, { message: "Failed to delete variable" });
+			}
+
+			return true;
+		} catch (error: unknown) {
+			return errorService.handleServiceError("Error while trying to delete Variable", error);
 		}
 	},
 };
