@@ -50,12 +50,15 @@ export const usersService = {
 
 	createUser: async (data: TUserCreateSchema) => {
 		try {
+			const currentDate = new Date();
+
 			const user = await db.user.create({
 				data: {
 					email: data.email,
 					emailVerified: false,
-					createdAt: new Date(),
-					updatedAt: new Date(),
+					createdAt: currentDate,
+					updatedAt: currentDate,
+					status: "pending",
 				},
 			});
 
@@ -189,6 +192,23 @@ export const usersService = {
 			return org;
 		} catch (error: unknown) {
 			return errorService.handleServiceError("Unexpected error while updating last active organization", error);
+		}
+	},
+
+	setUserActive: async (userId: string) => {
+		try {
+			const user = await db.user.update({
+				where: {
+					id: userId,
+				},
+				data: {
+					status: "active",
+				},
+			});
+
+			return user;
+		} catch (error: unknown) {
+			return errorService.handleServiceError("Unexpected error while setting user to active", error);
 		}
 	},
 };

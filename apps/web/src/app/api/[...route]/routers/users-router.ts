@@ -16,6 +16,12 @@ export const userRouter = new Hono()
 
 		return c.json({ message: "Successfully updated activeOrg", body: org }, 200);
 	})
+	.put("/activeUser", async (c) => {
+		const user = await usersService.getUser(c);
+		const updatedUser = await usersService.setUserActive(user.id);
+
+		return c.json({ message: "Set user active", body: updatedUser }, 200);
+	})
 	.get("/orgs", async (c) => {
 		return c.json(await usersService.getAllOrgsForCurrentUser((await usersService.getUser(c)).id));
 	})

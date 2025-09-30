@@ -28,6 +28,7 @@ model User {
   invitations   Invitation[]
 
   lastActiveOrgId String?
+  status          String  @default("active")
 
   twoFactorEnabled Boolean?
   twofactors       TwoFactor[]
@@ -145,7 +146,7 @@ model Stage {
   name      String
   spaceId   String
   space     Space      @relation(fields: [spaceId], references: [id], onDelete: Cascade)
-  variables      Variable[]
+  variables Variable[]
   createdAt DateTime   @default(now())
 
   @@map("stage")
@@ -157,12 +158,12 @@ model Variable {
   type      String
   value     String
   spaceId   String
-  space     Space      @relation(fields: [spaceId], references: [id], onDelete: Cascade)
-  stage     Stage[]    
+  space     Space    @relation(fields: [spaceId], references: [id], onDelete: Cascade)
+  stage     Stage[]
   createdAt DateTime @default(now())
 
+  @@unique([name, spaceId])
   @@map("variable")
-  @@unique([name,spaceId])
 }
 
 model TwoFactor {
