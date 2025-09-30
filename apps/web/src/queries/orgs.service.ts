@@ -82,7 +82,7 @@ export const orgsService = {
 		try {
 			const isOwner = await orgsService.isUserOwner(userId, orgSlug);
 			if (!isOwner) {
-				throw new HTTPException(403, { message: "Forbidden: Only owner can update the organization" });
+				throw new HTTPException(403, { message: "Only owner can update the organization" });
 			}
 
 			const org = await orgsService.getOrgBySlug(orgSlug);
@@ -113,7 +113,7 @@ export const orgsService = {
 		try {
 			const isOwner = await orgsService.isUserOwner(userId, orgSlug);
 			if (!isOwner) {
-				throw new HTTPException(403, { message: "Forbidden: Only Owner is allowed to delete Organization" });
+				throw new HTTPException(403, { message: "Only Owner is allowed to delete Organization" });
 			}
 
 			const org = await orgsService.getOrgBySlug(orgSlug);

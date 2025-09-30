@@ -8,12 +8,39 @@ import { Input } from "@workspace/ui/components/input";
 import { SlugInput } from "@workspace/ui/components/slug-input";
 import type { FC } from "react";
 import { orgSettings_name, orgSettings_slug } from "./schemas";
+import { useMutation } from "@tanstack/react-query";
+import type { TOrgUpdateSchema } from "@/validators/orgs.schema";
+import { toast } from "sonner";
 
 interface ICardsProps {
 	org: Organization;
 }
 
 export const Cards: FC<ICardsProps> = ({ org }) => {
+	const updateOrgMutation = useMutation({
+		mutationFn: async (orgData: TOrgUpdateSchema) => {
+			const res = await client.api.orgs[":orgSlug"].$patch({
+				json: orgData,
+				param: { orgSlug: org.slug },
+			});
+
+			const data = await res.json();
+
+			if (!res.ok) {
+				throw new Error(data.message);
+			}
+
+			return data;
+		},
+		onSuccess: async (data, variables, context) => {
+			toast.success("Organization updated!");
+		},
+		onError: (error, variables, context) => {
+			console.error("Org updating failed", error);
+			toast.error(error.message);
+		},
+	});
+
 	return (
 		<>
 			<SettingCard
@@ -22,12 +49,7 @@ export const Cards: FC<ICardsProps> = ({ org }) => {
 				instanceKey="name"
 				description="Name of your organization"
 				schema={orgSettings_name}
-				onSave={async (values) => {
-					await client.api.orgs[":orgSlug"].$patch({
-						json: values,
-						param: { orgSlug: org.slug },
-					});
-				}}
+				onSave={async (values) => updateOrgMutation.mutate(values)}
 				render={({ form }) => (
 					<FormField
 						control={form.control}
@@ -49,12 +71,7 @@ export const Cards: FC<ICardsProps> = ({ org }) => {
 				instanceKey="slug"
 				description="Slug of your organization"
 				schema={orgSettings_slug}
-				onSave={async (values) => {
-					await client.api.orgs[":orgSlug"].$patch({
-						json: values,
-						param: { orgSlug: org.slug },
-					});
-				}}
+				onSave={async (values) => updateOrgMutation.mutate(values)}
 				render={({ form }) => (
 					<FormField
 						control={form.control}

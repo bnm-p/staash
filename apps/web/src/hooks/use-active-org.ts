@@ -70,8 +70,6 @@ export const useActiveOrg = () => {
 		error: setActiveOrgError,
 	} = useMutation({
 		mutationFn: async ({ orgId, orgSlug }: SetActiveOrgParams) => {
-			console.log("setActiveOrg", orgId, orgSlug);
-
 			const response = await client.api.users.activeOrg.$put({
 				json: { orgId, orgSlug },
 			});

@@ -70,8 +70,6 @@ export const OrgSpaceSwitcher: FC<IOrgSpaceSwitcherProps> = ({ className }) => {
 
 	const handleSpacesToShowChange = useCallback(
 		(orgId: string) => {
-			console.log("handleSpacesToShowChange", orgId);
-
 			setSpacesToShow(spacesQuery.data?.filter((space) => space.organizationId === orgId) || []);
 		},
 		[spacesQuery.data],

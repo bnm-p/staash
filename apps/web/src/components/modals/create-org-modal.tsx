@@ -19,6 +19,8 @@ import { client } from "@/lib/client";
 import { useUploadThing } from "@/lib/uploadthing";
 import { Loader2 } from "lucide-react";
 import { ImageUpload } from "../ui/image-upload";
+import { useMutation } from "@tanstack/react-query";
+import type { TOrgCreateSchema } from "@/validators/orgs.schema";
 
 interface ICreateOrgModalProps extends React.ComponentProps<"div"> {}
 
@@ -33,9 +35,36 @@ export const CreateOrgModal: FC<ICreateOrgModalProps> = ({ className }) => {
 	const isModalOpen = isOpen && type === "create-org";
 
 	const router = useRouter();
-	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [pendingLogo, setPendingLogo] = useState<File | null>(null);
 	const [autoSlug, setAutoSlug] = useState(true);
+
+	const createOrgMutation = useMutation({
+		mutationFn: async (orgData: TOrgCreateSchema) => {
+			const res = await client.api.orgs.$post({
+				json: {
+					...orgData,
+				},
+			});
+
+			const data = await res.json();
+
+			if (!res.ok) {
+				throw new Error(data.message);
+			}
+
+			return data;
+		},
+		onSuccess: async (data, variables, context) => {
+			toast.success("Organization created!");
+			router.refresh();
+			router.push(`/${data.body.slug}`);
+			onClose();
+		},
+		onError: (error, variables, context) => {
+			console.error("Org creation failed", error);
+			toast.error(error.message);
+		},
+	});
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -49,7 +78,6 @@ export const CreateOrgModal: FC<ICreateOrgModalProps> = ({ className }) => {
 	const { startUpload } = useUploadThing("imageUploader", {
 		onUploadError: () => {
 			toast.error("Failed to upload logo");
-			setIsSubmitting(false);
 		},
 	});
 
@@ -74,8 +102,6 @@ export const CreateOrgModal: FC<ICreateOrgModalProps> = ({ className }) => {
 
 	const onSubmit = async (values: z.infer<typeof formSchema>) => {
 		try {
-			setIsSubmitting(true);
-
 			// Upload logo if present
 			let logoUrl = "";
 			if (pendingLogo) {
@@ -86,35 +112,10 @@ export const CreateOrgModal: FC<ICreateOrgModalProps> = ({ className }) => {
 				logoUrl = uploadResult[0].ufsUrl;
 			}
 
-			// Create organization
-			const res = await client.api.orgs.$post({
-				json: {
-					...values,
-					logo: logoUrl,
-				},
-			});
-
-
-			const data = await res.json();
-
-			console.log(data);
-
-			if(!res.ok){
-				let errMessage = "Failed to create organization"
-				errMessage = data.message || errMessage;
-				toast.error(errMessage);
-			}else{
-				toast.success("Organization created");
-				router.refresh();
-				router.push(`/${data.body.slug}`);
-				onClose();
-			}
-
+			createOrgMutation.mutate({ ...values, logo: logoUrl });
 		} catch (error) {
 			console.error("Form submission error", error);
 			toast.error("Failed to create organization");
-		} finally {
-			setIsSubmitting(false);
 		}
 	};
 
@@ -181,8 +182,8 @@ export const CreateOrgModal: FC<ICreateOrgModalProps> = ({ className }) => {
 						</div>
 
 						<div className="px-8 py-6">
-							<Button type="submit" className="w-full" disabled={isSubmitting}>
-								{isSubmitting ? (
+							<Button type="submit" className="w-full" disabled={createOrgMutation.isPending}>
+								{createOrgMutation.isPending ? (
 									<>
 										<Loader2 className="mr-2 h-4 w-4 animate-spin" />
 										Creating...
