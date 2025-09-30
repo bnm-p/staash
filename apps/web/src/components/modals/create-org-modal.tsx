@@ -94,11 +94,22 @@ export const CreateOrgModal: FC<ICreateOrgModalProps> = ({ className }) => {
 				},
 			});
 
+
 			const data = await res.json();
 
-			toast.success("Organization created");
-			router.refresh();
-			router.push(`/orgs/${data.body.slug}`);
+			console.log(data);
+
+			if(!res.ok){
+				let errMessage = "Failed to create organization"
+				errMessage = data.message || errMessage;
+				toast.error(errMessage);
+			}else{
+				toast.success("Organization created");
+				router.refresh();
+				router.push(`/${data.body.slug}`);
+				onClose();
+			}
+
 		} catch (error) {
 			console.error("Form submission error", error);
 			toast.error("Failed to create organization");

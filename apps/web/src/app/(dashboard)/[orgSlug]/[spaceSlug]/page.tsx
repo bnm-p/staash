@@ -12,7 +12,7 @@ const SpaceSlugPage: NextPage<ISpaceSlugPageProps> = async ({ params }) => {
 	const { orgSlug, spaceSlug } = await params;
 
 	const org = await orgsService.getOrgBySlug(orgSlug);
-	const space = await spacesService.getSpaceBySpaceSlugAndOrgSlug(spaceSlug, orgSlug);
+	const space = await spacesService.getSpaceBySpaceSlugAndOrgSlug({spaceSlug, orgSlug});
 
 	if (!space) {
 		return notFound();
