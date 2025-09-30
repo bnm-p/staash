@@ -24,7 +24,6 @@ const IndexPage: NextPage<IIndexPageProps> = async ({ searchParams }) => {
 
 	if (dbUser?.lastActiveOrgId) {
 		const org = await orgsService.getOrgById(dbUser?.lastActiveOrgId);
-
 		return redirect(`/${org.slug}`);
 	}
 
@@ -37,7 +36,6 @@ const IndexPage: NextPage<IIndexPageProps> = async ({ searchParams }) => {
 	if (organizations?.length === 0) {
 		return redirect("/?modalOpen=create-org");
 	}
-
 	return redirect(`/${organizations[0]?.slug}`);
 };
 

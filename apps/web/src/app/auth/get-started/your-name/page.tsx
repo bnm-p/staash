@@ -57,6 +57,8 @@ const YourNamePage = () => {
 				},
 			});
 
+			await client.api.users.activeUser.$put();
+
 			// Automatically sign in
 			await authClient.signIn.email({
 				email,

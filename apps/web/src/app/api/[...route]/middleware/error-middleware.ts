@@ -10,14 +10,14 @@ export const errorHandler = async (c: Context, error: unknown) => {
 		return c.json(
 			{
 				status: "error",
-				errors: error.cause,
+				message: error.cause,
 			},
 			400,
 		);
 	}
 
 	if (error instanceof HTTPException) {
-		return c.json({ error: error.message }, error.status);
+		return c.json({ message: error.message }, error.status);
 	}
 
 	return c.json(

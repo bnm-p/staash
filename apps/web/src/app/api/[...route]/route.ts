@@ -6,6 +6,7 @@ import { orgRouter } from "./routers/org-router";
 import { orgMiddleware } from "./middleware/org-middleware";
 import { userRouter } from "./routers/users-router";
 import { errorHandler } from "./middleware/error-middleware";
+import { cleanupRouter } from "./routers/cleanup-router";
 
 declare module "hono" {
 	interface ContextVariableMap {
@@ -52,7 +53,7 @@ app.on(["POST", "GET"], "/auth/*", (c) => {
 	return auth.handler(c.req.raw);
 });
 
-const routes = app.route("/orgs", orgRouter).route("/users", userRouter);
+const routes = app.route("/orgs", orgRouter).route("/users", userRouter).route("/cleanups", cleanupRouter);
 
 export const GET = handle(app);
 export const POST = handle(app);

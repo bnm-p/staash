@@ -37,7 +37,7 @@ export const SettingsCard: FC<ISettingsCardProps> = ({ schema, defaultValue, ins
 			});
 
 			if (res.ok && values.slug) {
-				router.push(`/orgs/${values.slug}/settings`);
+				router.push(`/${values.slug}/settings`);
 			}
 
 			router.refresh();
