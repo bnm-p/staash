@@ -17,7 +17,7 @@ export const orgsService = {
 
 			return org;
 		} catch (error: unknown) {
-			return errorService.handleServiceError("Error in getting organization by org slug", error);
+			return errorService.handleServiceError("Unexpected error while getting organization by org slug", error);
 		}
 	},
 
@@ -33,7 +33,7 @@ export const orgsService = {
 
 			return org;
 		} catch (error: unknown) {
-			return errorService.handleServiceError("Error in getting organization by orgId", error);
+			return errorService.handleServiceError("Unexpected error while getting organization by orgId", error);
 		}
 	},
 
@@ -74,7 +74,7 @@ export const orgsService = {
 					throw new HTTPException(400, { message: "Organization with this slug already exists" });
 				}
 			}
-			return errorService.handleServiceError("Error while creating Organization", error);
+			return errorService.handleServiceError("Unexpected error while creating Organization", error);
 		}
 	},
 
@@ -105,7 +105,7 @@ export const orgsService = {
 					throw new HTTPException(400, { message: "Organization with this slug already exists" });
 				}
 			}
-			return errorService.handleServiceError("Error while trying to update organization", error);
+			return errorService.handleServiceError("Unexpected error while updating organization", error);
 		}
 	},
 
@@ -133,7 +133,7 @@ export const orgsService = {
 
 			return true;
 		} catch (error: unknown) {
-			return errorService.handleServiceError("Error while deleting Organization", error);
+			return errorService.handleServiceError("Unexpected error while deleting Organization", error);
 		}
 	},
 
@@ -146,7 +146,7 @@ export const orgsService = {
 
 			return member?.role === "owner";
 		} catch (error: unknown) {
-			return errorService.handleServiceError("Error while checking if user is the owner", error);
+			return errorService.handleServiceError("Unexpected error while checking if user is the owner", error);
 		}
 	},
 
@@ -164,7 +164,7 @@ export const orgsService = {
 
 			return true;
 		} catch (error: unknown) {
-			return errorService.handleServiceError("Error while checking org slug", error);
+			return errorService.handleServiceError("Unexpected error while checking org slug", error);
 		}
 	},
 };

@@ -162,7 +162,7 @@ model Variable {
   createdAt DateTime @default(now())
 
   @@map("variable")
-  @@unique([spaceId, name])
+  @@unique([name,spaceId])
 }
 
 model TwoFactor {

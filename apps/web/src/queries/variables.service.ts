@@ -5,24 +5,40 @@ import { spacesService } from "./spaces.service";
 import type { TVariableCreateSchema, TVariableIdSchema, TVariableUpdateSchema } from "@/validators/variables.schema";
 import { HTTPException } from "hono/http-exception";
 import { AES } from "@/encrypting/AES256GCM";
+import { Prisma } from "@prisma/client";
 
 export const variablesService = {
-	getAllVariablesBySpaceAndOrgSlug: async ({ orgSlug, spaceSlug }: TOrgAndSpaceSlug) => {
+	getAllVariablesBySpaceAndOrgSlugDecrypted: async (data: TOrgAndSpaceSlug) => {
 		try {
-			const space = await spacesService.getSpaceBySpaceSlugAndOrgSlug(spaceSlug, orgSlug);
+			const space = await spacesService.getSpaceBySpaceSlugAndOrgSlug(data);
 
 			const variables = await db.variable.findMany({
 				where: { spaceId: space.id },
 			});
 
+			for (const v of variables) {
+				v.value = AES.decrypt(v.value);
+			}
 			return variables;
 		} catch (error: unknown) {
-			return errorService.handleServiceError("Error while trying to fetch Variables", error);
+			return errorService.handleServiceError("Unexpected error while fetching variables decrypted", error);
+		}
+	},
+
+	getAllVariablesBySpaceAndOrgSlug: async (data: TOrgAndSpaceSlug) => {
+		try {
+			const space = await spacesService.getSpaceBySpaceSlugAndOrgSlug(data);
+
+			return await db.variable.findMany({
+				where: { spaceId: space.id },
+			});
+		} catch (error: unknown) {
+			return errorService.handleServiceError("Unexpected error while fetching variables", error);
 		}
 	},
 	createVariable: async (data: TVariableCreateSchema) => {
 		try {
-			const variable = await db.variable.create({
+			return await db.variable.create({
 				data: {
 					name: data.name,
 					value: AES.encrypt(data.value),
@@ -30,27 +46,35 @@ export const variablesService = {
 					type: "", //TODO Remove from DB schema
 				},
 			});
-
-			if (!variable) {
-				throw new HTTPException(500, { message: "Failed to create variable" });
-			}
 		} catch (error: unknown) {
-			return errorService.handleServiceError("Error while trying to create Variable", error);
+			if (error instanceof Prisma.PrismaClientKnownRequestError) {
+				if (error.code === "P2002") {
+					throw new HTTPException(400, { message: "Variable with this name already exists in this Space." });
+				}
+			}
+			return errorService.handleServiceError("Unexpected error while creating Variable", error);
 		}
 	},
 	updateVariable: async ({ variableId }: TVariableIdSchema, data: TVariableUpdateSchema) => {
-		const cleanData = Object.fromEntries(Object.entries(data).filter(([_, value]) => value !== undefined));
+		try {
+			const cleanData = Object.fromEntries(Object.entries(data).filter(([_, value]) => value !== undefined));
 
-		const updatedVariable = await db.variable.update({
-			where: {
-				id: variableId,
-			},
-			data: {
-				...cleanData,
-			},
-		});
-
-		return updatedVariable;
+			return await db.variable.update({
+				where: {
+					id: variableId,
+				},
+				data: {
+					...cleanData,
+				},
+			});
+		} catch (error: unknown) {
+			if (error instanceof Prisma.PrismaClientKnownRequestError) {
+				if (error.code === "P2002") {
+					throw new HTTPException(400, { message: "Variable with this name already exists in this Space." });
+				}
+			}
+			return errorService.handleServiceError("Unexpected error while updating Variable", error);
+		}
 	},
 	deleteVariable: async ({ variableId }: TVariableIdSchema) => {
 		try {
@@ -64,7 +88,7 @@ export const variablesService = {
 
 			return true;
 		} catch (error: unknown) {
-			return errorService.handleServiceError("Error while trying to delete Variable", error);
+			return errorService.handleServiceError("Unexpected error while deleting Variable", error);
 		}
 	},
 };

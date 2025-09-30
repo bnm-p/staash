@@ -17,14 +17,14 @@ export const spaceRouter = new Hono()
 		return c.json(await spacesService.getAllSpacesByOrgSlug(c.req.valid("param")));
 	})
 	.get("/:spaceSlug", zValidator("param", orgAndSpaceSlug), async (c) => {
-		return c.json(await spacesService.getSingleSpaceBySpaceSlugAndOrgSlug(c.req.valid("param")));
+		return c.json(await spacesService.getSpaceBySpaceSlugAndOrgSlug(c.req.valid("param")));
 	})
 	.delete("/:spaceSlug", zValidator("param", orgAndSpaceSlug), async (c) => {
 		const user = await usersService.getUser(c);
 
 		return (await spacesService.deleteSpace(user.id, c.req.valid("param")))
 			? c.json({ message: "Space deleted successfully" }, 202)
-			: c.json({ message: "Space not deleted successfully" }, 500);
+			: c.json({ message: "Space could not be deleted" }, 500);
 	})
 	.patch("/:spaceSlug", zValidator("json", spaceUpdateSchema), zValidator("param", orgAndSpaceSlug), async (c) => {
 		const user = await usersService.getUser(c);

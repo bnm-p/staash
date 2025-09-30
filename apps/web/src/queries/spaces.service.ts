@@ -24,10 +24,10 @@ export const spacesService = {
 
 			return spaces;
 		} catch (error: unknown) {
-			return errorService.handleServiceError("Error in getting space by space slug and ordId", error);
+			return errorService.handleServiceError("Unexpected error while getting space by space slug and orgId", error);
 		}
 	},
-	getSpaceBySpaceSlugAndOrgSlug: async (spaceSlug: string, orgSlug: string) => {
+	getSpaceBySpaceSlugAndOrgSlug: async ({ spaceSlug, orgSlug }: TOrgAndSpaceSlug) => {
 		try {
 			const org = await orgsService.getOrgBySlug(orgSlug);
 
@@ -35,7 +35,7 @@ export const spacesService = {
 
 			return space;
 		} catch (error: unknown) {
-			return errorService.handleServiceError("Error in getting Space by org and space slug", error);
+			return errorService.handleServiceError("Unexpected error while getting Space by org and space slug", error);
 		}
 	},
 
@@ -61,7 +61,7 @@ export const spacesService = {
 					throw new HTTPException(400, { message: "Space with this slug already exists in this Organization." });
 				}
 			}
-			return errorService.handleServiceError("Error while creating Space", error);
+			return errorService.handleServiceError("Unexpected error while creating Space", error);
 		}
 	},
 
@@ -77,30 +77,7 @@ export const spacesService = {
 
 			return spaces;
 		} catch (error: unknown) {
-			return errorService.handleServiceError("Error while trying to fetch Spaces", error);
-		}
-	},
-
-	getSingleSpaceBySpaceSlugAndOrgSlug: async ({ orgSlug, spaceSlug }: TOrgAndSpaceSlug) => {
-		try {
-			const org = await orgsService.getOrgBySlug(orgSlug);
-
-			const space = await db.space.findUnique({
-				where: {
-					slug_organizationId: {
-						slug: spaceSlug,
-						organizationId: org.id,
-					},
-				},
-			});
-
-			if (!space) {
-				throw new HTTPException(404, { message: "No space with this slug in this organization" });
-			}
-
-			return space;
-		} catch (error: unknown) {
-			return errorService.handleServiceError("Error while trying to fetch spaces", error);
+			return errorService.handleServiceError("Unexpected error while fetching Spaces", error);
 		}
 	},
 
@@ -130,19 +107,19 @@ export const spacesService = {
 
 			return updatedSpace;
 		} catch (error: unknown) {
-			return errorService.handleServiceError("Error while trying to update space", error);
+			return errorService.handleServiceError("Unexpected error while updating space", error);
 		}
 	},
 
-	deleteSpace: async (userId: string, { orgSlug, spaceSlug }: TOrgAndSpaceSlug) => {
+	deleteSpace: async (userId: string, data: TOrgAndSpaceSlug) => {
 		try {
-			const isOwner = await orgsService.isUserOwner(userId, orgSlug);
+			const isOwner = await orgsService.isUserOwner(userId, data.orgSlug);
 
 			if (!isOwner) {
 				throw new HTTPException(403, { message: "Forbidden: Only Owner is allowed to delete Organization" });
 			}
 
-			const space = await spacesService.getSpaceBySpaceSlugAndOrgSlug(spaceSlug, orgSlug);
+			const space = await spacesService.getSpaceBySpaceSlugAndOrgSlug(data);
 
 			const deletedSpace = await db.space.delete({
 				where: { id: space.id },
@@ -154,7 +131,7 @@ export const spacesService = {
 
 			return true;
 		} catch (error: unknown) {
-			return errorService.handleServiceError("Error while trying to fetch Spaces", error);
+			return errorService.handleServiceError("Unexpected error while deleting Spaces", error);
 		}
 	},
 };

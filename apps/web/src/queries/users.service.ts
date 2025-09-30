@@ -44,7 +44,7 @@ export const usersService = {
 
 			return user;
 		} catch (error: unknown) {
-			return errorService.handleServiceError("Error while trying to fetch User", error);
+			return errorService.handleServiceError("Unexpected error while fetching user", error);
 		}
 	},
 
@@ -65,7 +65,7 @@ export const usersService = {
 
 			return user;
 		} catch (error: unknown) {
-			return errorService.handleServiceError("Error while creating User", error);
+			return errorService.handleServiceError("Unexpected error while creating User", error);
 		}
 	},
 
@@ -93,7 +93,7 @@ export const usersService = {
 
 			return account;
 		} catch (error) {
-			return errorService.handleServiceError("Error while creating User", error);
+			return errorService.handleServiceError("Unexpected error while creating User", error);
 		}
 	},
 
@@ -111,7 +111,7 @@ export const usersService = {
 
 			return user;
 		} catch (error: unknown) {
-			return errorService.handleServiceError("Error while trying to fetch User", error);
+			return errorService.handleServiceError("Unexpected error while fetching User", error);
 		}
 	},
 
@@ -136,7 +136,7 @@ export const usersService = {
 
 			return orgs;
 		} catch (error: unknown) {
-			return errorService.handleServiceError("Error while trying to fetch all organization for current user", error);
+			return errorService.handleServiceError("Unexpected error while fetching all organization for current user", error);
 		}
 	},
 	getActiveOrg: async (userId: string) => {
@@ -156,7 +156,7 @@ export const usersService = {
 
 			return await orgsService.getOrgById(user.lastActiveOrgId);
 		} catch (error: unknown) {
-			return errorService.handleServiceError("Error while trying to fetch last active organization", error);
+			return errorService.handleServiceError("Unexpected error while fetching last active organization", error);
 		}
 	},
 
@@ -188,7 +188,7 @@ export const usersService = {
 
 			return org;
 		} catch (error: unknown) {
-			return errorService.handleServiceError("Error while trying to update last active organization", error);
+			return errorService.handleServiceError("Unexpected error while updating last active organization", error);
 		}
 	},
 };
