@@ -12,9 +12,13 @@ export const onboardingSchema = z.object({
 		.max(20, {
 			message: "Password must be at most 20 characters",
 		})
-		.regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/, {
-			message: "Password must contain at least one uppercase letter, one lowercase letter, one number and one special character",
-		}),
+		.regex(
+			/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?])[A-Za-z\d!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]{8,}$/,
+			{
+				message:
+					"Password must contain at least one uppercase letter, one lowercase letter, one number and one special character",
+			},
+		),
 	repeatPassword: z
 		.string({
 			required_error: "Password is required",
